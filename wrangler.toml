@@ -1,3 +1,4 @@
-name = "sdc"
+name name = "sdc"
 compatibility_date = "2024-09-23"
-assets = "./"
+
+assets = { directory = "./" }
