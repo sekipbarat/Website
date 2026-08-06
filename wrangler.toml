@@ -1,4 +1,4 @@
-name name = "sdc"
+name = "sdc"
 compatibility_date = "2024-09-23"
 
 assets = { directory = "./" }
