@@ -220,6 +220,593 @@
             margin: 0 auto;
         }
 
+        /* TAMPILAN LOCK SCREEN PASSWORD */
+        .lock-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            max-width: 360px;
+            margin: 20px auto;
+        }
+
+        .lock-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .lock-card h3 {
+            font-size: 0.975rem;
+            color: var(--text-title);
+            font-weight: 700;
+        }
+
+        .lock-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .password-input:focus {
+            border-color: var(--accent-black);
+        }
+
+        .btn-unlock {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--accent-black);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-unlock:hover {
+            opacity: 0.9;
+        }
+
+        .error-text {
+            color: #ef4444;
+            font-size: 0.775rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        /* Box Pengumuman Soft Minimalis */
+        .announcement-box {
+            display: none;
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .announcement-box.active {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .announcement-header {
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .announcement-marquee-wrapper {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .announcement-text {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            color: #854d0e;
+            font-weight: 600;
+            padding-left: 100%;
+            animation: marqueeAnnounce 22s linear infinite;
+        }
+
+        @keyframes marqueeAnnounce {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Player Box */
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .audio-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .audio-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .date-info {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            padding: 3px 9px;
+            border-radius: 6px;
+            line-height: 1.2;
+        }
+
+        .card-top {
+            padding-right: 110px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .row-1 {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+        }
+
+        .teacher-name {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-title);
+            background-color: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            padding: 3px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .kitab-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-title);
+            letter-spacing: -0.01em;
+        }
+
+        .row-2 {
+            display: flex;
+            align-items: center;
+        }
+
+        .page-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .native-audio-player {
+            width: 100%;
+            height: 42px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .audio-notice-box {
+            background-color: #f4f4f5;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin: 4px 0;
+        }
+
+        .audio-notice-box .notice-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            font-weight: 400;
+        }
+
+        .previous-title-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px 0 4px 0;
+        }
+
+        .previous-title-container h4 {
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .previous-title-container .title-line {
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        /* ANIMASI & TEKS LOADING */
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 42px 16px;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .loader-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 24px;
+            margin-bottom: 6px;
+        }
+
+        .loader-wave div {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-black);
+            border-radius: 50%;
+            animation: wavePulse 1.2s infinite ease-in-out both;
+        }
+
+        .loader-wave div:nth-child(1) { animation-delay: -0.32s; }
+        .loader-wave div:nth-child(2) { animation-delay: -0.16s; }
+        .loader-wave div:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes wavePulse {
+            0%, 80%, 100% {
+                transform: scale(0.4);
+                opacity: 0.25;
+            }
+            40% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .loading-title {
+            color: var(--text-title);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .loading-subtext {
+            color: var(--text-muted);
+            font-size: 0.775rem;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .docs-wrapper {
+            padding: 4px;
+        }
+
+        .docs-wrapper h3.section-title {
+            font-size: 1.05rem;
+            color: var(--text-title);
+            margin-bottom: 16px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
+        }
+
+        .doc-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            text-decoration: none;
+            transition: border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .doc-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .doc-card-info {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .doc-card-info h4 {
+            font-size: 0.85rem;
+            color: var(--text-title);
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .doc-card-info span {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .about-wrapper {
+            padding: 10px 4px;
+            text-align: center;
+            color: var(--text-body);
+            line-height: 1.55;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .about-wrapper h3 {
+            font-size: 1.05rem;
+            color: var(--text-title);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .about-wrapper p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .about-wrapper .closing {
+            font-weight: 600;
+            color: var(--text-title);
+            margin-top: 14px;
+        }
+
+        footer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="title-box" onclick="switchSection('sdc')">
+                <h1>Sekip Barat</h1>
+            </div>
+            <div class="menu-container">
+                <button class="menu-icon-btn" onclick="toggleMenu()" aria-label="Menu">&#9776;</button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <button class="nav-btn" onclick="switchSection('sdc')">Pemutar SDC</button>
+                    <button class="nav-btn" onclick="switchSection('dokumentasi')">Dokumentasi</button>
+                    <button class="nav-btn" onclick="switchSection('tentang')">Tentang</button>
+                </div>
+            </div>
+        </div>
+        <div class="marquee-container">
+            <div class="marquee-track">
+                <span>Berakhlakul karimah</span><span class="dot">&bull;</span>
+                <span>Alim Faqih</span><span class="dot">&bull;</span>
+                <span>Mandiri</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- MENU PEMUTAR SDC -->
+        <div id="sdc" class="section-content active">
+            
+            <!-- LAYAR TERKUNCI PASSWORD -->
+            <div id="sdcLockScreen" class="lock-card">
+                <div class="lock-icon">🔒</div>
+                <h3>Akses Pemutar Terkunci</h3>
+                <p>Masukkan password untuk membukanya.</p>
+                <input type="password" id="passInput" class="password-input" placeholder="Masukkan password..." onkeydown="handleKeyPress(event)">
+                <button class="btn-unlock" onclick="unlockSDC()">Buka Pemutar</button>
+                <span id="passError" class="error-text">Password salah, coba lagi!</span>
+            </div>
+
+            <!-- KONTEN PEMUTAR AUDIO (TAMPIL SETELAH PASSWORD BENAR) -->
+            <div id="sdcMainContent" style="display: none;">
+                <div class="sdc-header">
+                    <h3>Arsip Pengajian SDC Sesi Subuh</h3>
+                    <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
+                </div>
+                
+                <div id="announcementBox" class="announcement-box">
+                    <div class="announcement-header">📢</div>
+                    <div class="announcement-marquee-wrapper">
+                        <div class="announcement-text" id="announcementText"></div>
+                    </div>
+                </div>
+
+                <div class="audio-list" id="audioContainer">
+                    <div class="loading-box">
+                        <div class="loader-wave">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <span class="loading-title">Mohon bersabar nggih</span>
+                        <span class="loading-subtext">Jika terjadi eror, coba refresh halaman</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MENU DOKUMENTASI (TANPA PASSWORD) -->
+        <div id="dokumentasi" class="section-content">
+            <div class="docs-wrapper">
+                <h3 class="section-title">Dokumentasi Kegiatan</h3>
+                <div class="docs-grid">
+                    <a href="https://drive.google.com/drive/folders/141-S3Nak9Q4-R532xxerXWJZhIZm-w68" target="_blank" class="doc-card">
+                        <img src="qurban.jpg" alt="Qurban Sekip Barat 2026">
+                        <div class="doc-card-info">
+                            <h4>Qurban Sekip Barat 2026</h4>
+                            <span>Buka Google Drive &rarr;</span>
+                        </div>
+                    </a>
+
+                    <a href="https://drive.google.com/drive/folders/1iqATpZg24OsgS28ewQ_Z1SpLGzRSikym" target="_blank" class="doc-card">
+                        <img src="walking.jpg" alt="Walking Day Sek            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            padding: 4px;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 100;
+            min-width: 150px;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-menu .nav-btn {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.825rem;
+            font-weight: 500;
+            color: var(--text-body);
+            cursor: pointer;
+        }
+
+        .dropdown-menu .nav-btn:hover {
+            background: var(--badge-bg);
+            color: var(--text-title);
+        }
+
+        /* Teks Berjalan Running Text */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 0;
+            white-space: nowrap;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scrollText 20s linear infinite;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .marquee-track span {
+            display: inline-block;
+            padding: 0 10px;
+        }
+
+        .marquee-track .dot {
+            color: var(--border-hover);
+            padding: 0;
+        }
+
+        @keyframes scrollText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Container Utama */
+        .main-wrapper {
+            width: 100%;
+            max-width: 680px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        /* Header Subuh */
+        .sdc-header {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .sdc-header h3 {
+            font-size: 1.05rem;
+            color: var(--text-title);
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
+        }
+
+        .sdc-header p {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.45;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
         /* Box Pengumuman Soft Minimalis */
         .announcement-box {
             display: none;
