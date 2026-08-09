@@ -34,132 +34,17 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             padding: 16px;
             -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- TAMPILAN LOCK SCREEN GLOBAL --- */
-        .lock-wrapper {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
-        }
-
-        .lock-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 32px 24px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .lock-icon-box {
-            width: 48px;
-            height: 48px;
-            background: var(--badge-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 4px;
-        }
-
-        .lock-card h2 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-title);
-            letter-spacing: -0.01em;
-        }
-
-        .lock-card p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.45;
-            font-weight: 400;
-        }
-
-        .input-group {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 6px;
-        }
-
-        .password-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 0.875rem;
-            outline: none;
-            transition: all 0.2s;
-            text-align: center;
-            background-color: var(--bg-body);
-        }
-
-        .password-input:focus {
-            border-color: var(--accent-black);
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
-        }
-
-        .btn-unlock {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--accent-black);
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-
-        .btn-unlock:hover {
-            opacity: 0.9;
-        }
-
-        .btn-unlock:active {
-            transform: scale(0.99);
-        }
-
-        .error-text {
-            color: #ef4444;
-            font-size: 0.775rem;
-            font-weight: 500;
-            display: none;
-        }
-
-        /* --- TAMPILAN UTAMA WEBSITE --- */
-        #appContent {
-            width: 100%;
-            max-width: 680px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
         }
 
         header {
             margin-bottom: 16px;
             text-align: center;
             width: 100%;
+            max-width: 680px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -193,6 +78,7 @@
             letter-spacing: -0.01em;
         }
 
+        /* Menu Hamburger Minimalis */
         .menu-container {
             position: relative;
         }
@@ -257,6 +143,7 @@
             color: var(--text-title);
         }
 
+        /* Running Text Header */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -291,8 +178,10 @@
             100% { transform: translateX(-100%); }
         }
 
+        /* Container Utama */
         .main-wrapper {
             width: 100%;
+            max-width: 680px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
@@ -308,6 +197,7 @@
             display: block;
         }
 
+        /* Header Subuh */
         .sdc-header {
             text-align: center;
             margin-bottom: 22px;
@@ -330,6 +220,7 @@
             margin: 0 auto;
         }
 
+        /* Box Pengumuman Soft Minimalis */
         .announcement-box {
             display: none;
             background: #fefce8;
@@ -372,6 +263,7 @@
             100% { transform: translateX(-100%); }
         }
 
+        /* Player Box */
         .audio-list {
             display: flex;
             flex-direction: column;
@@ -496,6 +388,7 @@
             background-color: var(--border-color);
         }
 
+        /* Animasi & Teks Loading */
         .loading-box {
             display: flex;
             flex-direction: column;
@@ -649,66 +542,222 @@
 </head>
 <body>
 
-    <!-- LOCK SCREEN UTAMA (TAMPIL KETIKA BELUM LOGIN) -->
-    <div id="globalLockScreen" class="lock-wrapper">
-        <div class="lock-card">
-            <div class="lock-icon-box">🔒</div>
-            <h2>Silahkan masukan pasword</h2>
-            <div class="input-group">
-                <input type="password" id="globalPassInput" class="password-input" placeholder="Password..." onkeydown="handleGlobalKeyPress(event)">
-                <button class="btn-unlock" onclick="unlockSite()">Masuk</button>
+    <header>
+        <div class="header-top">
+            <div class="title-box" onclick="switchSection('sdc')">
+                <h1>Sekip Barat</h1>
             </div>
-            <p>mohon maaf website untuk pemakain pribadi</p>
-            <span id="globalPassError" class="error-text">Password salah, silakan coba lagi!</span>
+            <div class="menu-container">
+                <button class="menu-icon-btn" onclick="toggleMenu()" aria-label="Menu">&#9776;</button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <button class="nav-btn" onclick="switchSection('sdc')">Pemutar SDC</button>
+                    <button class="nav-btn" onclick="switchSection('dokumentasi')">Dokumentasi</button>
+                    <button class="nav-btn" onclick="switchSection('tentang')">Tentang</button>
+                </div>
+            </div>
+        </div>
+        <div class="marquee-container">
+            <div class="marquee-track">
+                <span>Berakhlakul karimah</span><span class="dot">&bull;</span>
+                <span>Alim Faqih</span><span class="dot">&bull;</span>
+                <span>Mandiri</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- MENU PEMUTAR SDC -->
+        <div id="sdc" class="section-content active">
+            <div class="sdc-header">
+                <h3>Arsip Pengajian SDC Sesi Subuh</h3>
+                <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
+            </div>
+            
+            <div id="announcementBox" class="announcement-box">
+                <div class="announcement-header">📢</div>
+                <div class="announcement-marquee-wrapper">
+                    <div class="announcement-text" id="announcementText"></div>
+                </div>
+            </div>
+
+            <div class="audio-list" id="audioContainer">
+                <div class="loading-box">
+                    <div class="loader-wave">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <span class="loading-title">Mohon bersabar nggih</span>
+                    <span class="loading-subtext">Jika terjadi eror coba refresh halaman</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENU DOKUMENTASI -->
+        <div id="dokumentasi" class="section-content">
+            <div class="docs-wrapper">
+                <h3 class="section-title">Dokumentasi Kegiatan</h3>
+                <div class="docs-grid">
+                    <a href="https://drive.google.com/drive/folders/141-S3Nak9Q4-R532xxerXWJZhIZm-w68" target="_blank" class="doc-card">
+                        <img src="qurban.jpg" alt="Qurban Sekip Barat 2026">
+                        <div class="doc-card-info">
+                            <h4>Qurban Sekip Barat 2026</h4>
+                            <span>Buka Google Drive &rarr;</span>
+                        </div>
+                    </a>
+
+                    <a href="https://drive.google.com/drive/folders/1iqATpZg24OsgS28ewQ_Z1SpLGzRSikym" target="_blank" class="doc-card">
+                        <img src="walking.jpg" alt="Walking Day Sekip Barat 2025">
+                        <div class="doc-card-info">
+                            <h4>Walking Day Sekip Barat 2025</h4>
+                            <span>Buka Google Drive &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENU TENTANG -->
+        <div id="tentang" class="section-content">
+            <div class="about-wrapper">
+                <h3>Tentang Website Ini</h3>
+                <p>Website ini dibuat agar lebih mudah dan simpel dalam mengakses pengajian. Mengingat tidak semua orang bisa hadir langsung di tempat pengajian, serta tidak semua orang terbiasa mengoperasikan HP.</p>
+                <p>Mohon maaf apabila masih terdapat banyak kekurangan. Semoga Allah paring manfaat dan barokah.</p>
+                <p class="closing">Alhamdulillah jazza Kummullohu Khoiro</p>
+            </div>
         </div>
     </div>
 
-    <!-- KONTEN UTAMA WEBSITE (TAMPIL SETELAH PASSWORD BENAR) -->
-    <div id="appContent">
-        <header>
-            <div class="header-top">
-                <div class="title-box" onclick="switchSection('sdc')">
-                    <h1>Sekip Barat</h1>
-                </div>
-                <div class="menu-container">
-                    <button class="menu-icon-btn" onclick="toggleMenu()" aria-label="Menu">&#9776;</button>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <button class="nav-btn" onclick="switchSection('sdc')">Pemutar SDC</button>
-                        <button class="nav-btn" onclick="switchSection('dokumentasi')">Dokumentasi</button>
-                        <button class="nav-btn" onclick="switchSection('tentang')">Tentang</button>
-                    </div>
-                </div>
-            </div>
-            <div class="marquee-container">
-                <div class="marquee-track">
-                    <span>Berakhlakul karimah</span><span class="dot">&bull;</span>
-                    <span>Alim Faqih</span><span class="dot">&bull;</span>
-                    <span>Mandiri</span>
-                </div>
-            </div>
-        </header>
+    <footer>
+        Sekip Barat &copy; 2026
+    </footer>
 
-        <div class="main-wrapper">
-            <!-- MENU PEMUTAR SDC -->
-            <div id="sdc" class="section-content active">
-                <div class="sdc-header">
-                    <h3>Arsip Pengajian SDC Sesi Subuh</h3>
-                    <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
-                </div>
+    <script>
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz8J48kbjFFXuS_6zKVaxPO2ABz23WntlAAb3jSzAORtuNJXQb30nTUYXBHy0vuuEHt/exec";
+
+        function formatTanggal(str) {
+            if (!str) return '';
+            const val = str.toString().trim();
+            if (val.includes('T') && val.includes('Z')) {
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('id-ID', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                }
+            }
+            return val;
+        }
+
+        function formatHalaman(str) {
+            if (!str) return '';
+            const val = str.toString().trim();
+            if (val.includes('T') && val.includes('Z')) {
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) {
+                    return `${d.getDate()}–${d.getMonth() + 1}`;
+                }
+            }
+            return val;
+        }
+
+        async function fetchAudioFromSheets() {
+            const container = document.getElementById('audioContainer');
+            const announceBox = document.getElementById('announcementBox');
+            const announceText = document.getElementById('announcementText');
+
+            try {
+                const response = await fetch(GOOGLE_SHEET_URL);
+                const data = await response.json();
                 
-                <div id="announcementBox" class="announcement-box">
-                    <div class="announcement-header">📢</div>
-                    <div class="announcement-marquee-wrapper">
-                        <div class="announcement-text" id="announcementText"></div>
-                    </div>
-                </div>
+                let textPengumuman = "";
+                if (Array.isArray(data)) {
+                    const itemWithAnnounce = data.find(item => item.pengumuman && item.pengumuman.toString().trim() !== "");
+                    if (itemWithAnnounce) {
+                        textPengumuman = itemWithAnnounce.pengumuman;
+                    }
+                } else if (data.pengumuman) {
+                    textPengumuman = data.pengumuman;
+                }
 
-                <div class="audio-list" id="audioContainer">
-                    <div class="loading-box">
-                        <div class="loader-wave">
-                            <div></div>
-                            <div></div>
-                            <div></div>
+                if (textPengumuman && textPengumuman.toString().trim() !== "") {
+                    announceText.innerText = textPengumuman.toString();
+                    announceBox.classList.add('active');
+                } else {
+                    announceBox.classList.remove('active');
+                }
+
+                const listData = Array.isArray(data) ? data : (data.audios || []);
+                let htmlContent = '';
+
+                listData.forEach(item => {
+                    const tanggalTampil = formatTanggal(item.tanggal);
+                    const halamanTampil = formatHalaman(item.halaman);
+
+                    htmlContent += `
+                        <div class="audio-card">
+                            <span class="date-info">${tanggalTampil}</span>
+                            
+                            <div class="card-top">
+                                <div class="row-1">
+                                    ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
+                                    <span class="kitab-name">${item.kitab || ''}</span>
+                                </div>
+                                <div class="row-2">
+                                    <span class="page-info">${halamanTampil}</span>
+                                </div>
+                            </div>
+                            <audio controls class="native-audio-player">
+                                <source src="${item.fileAudio}" type="audio/mpeg">
+                                Browser Anda tidak mendukung pemutar audio.
+                            </audio>
                         </div>
-                        <span class="loading-title">Mohon bersabar nggih</span>
-                        <span class="loading-subtext"
+                    `;
+
+                    if (item.pisah && (item.pisah.toString().toLowerCase() === 'true' || item.pisah.toString().toLowerCase() === 'ya')) {
+                        htmlContent += `
+                            <div class="audio-notice-box">
+                                <p class="notice-desc">Mohon maaf jika mengalami kendala audio putus-putus, karena biasanya koneksi SDC kurang stabil.</p>
+                            </div>
+                            <div class="previous-title-container">
+                                <h4>Pengajian Sebelumnya</h4>
+                                <div class="title-line"></div>
+                            </div>
+                        `;
+                    }
+                });
+
+                container.innerHTML = htmlContent;
+            } catch (error) {
+                container.innerHTML = '<div class="loading-box"><span class="loading-title" style="color:#ef4444;">Gagal memuat data audio.</span><span class="loading-subtext">Silakan coba refresh halaman Anda.</span></div>';
+            }
+        }
+
+        // AMBIL DATA AUDIO LANGSUNG SAAT HALAMAN DIBUKA
+        fetchAudioFromSheets();
+
+        function toggleMenu() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById('dropdownMenu').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-icon-btn') && !event.target.closest('.menu-icon-btn')) {
+                const menu = document.getElementById('dropdownMenu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
