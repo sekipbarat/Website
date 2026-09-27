@@ -896,18 +896,21 @@
                 return;
             }
 
-            // Cek apakah data pertama berisi keterangan Libur
+            // Cek apakah item paling atas di spreadsheet menandakan status "Libur" khusus untuk sesi ini
             const itemTerbaru = listData[0];
             const cekTeks = (itemTerbaru.tanggal || '').toString().toLowerCase();
             const cekKitab = (itemTerbaru.kitab || '').toString().toLowerCase();
             const cekPenceramah = (itemTerbaru.penceramah || '').toString().toLowerCase();
+            const cekAudio = (itemTerbaru.fileAudio || '').toString().trim();
 
+            // Sesi dianggap libur jika baris pertama secara eksplisit menuliskan kata "libur" 
+            // ATAU kolom file audio kosong dan barisnya cuma berisi keterangan libur
             if (cekTeks.includes('libur') || cekKitab.includes('libur') || cekPenceramah.includes('libur')) {
                 container.innerHTML = `
                     <div class="libur-box">
                         <div class="libur-icon">🏖️</div>
-                        <div class="libur-title">${itemTerbaru.kitab || 'Sesi Ini Libur'}</div>
-                        <div class="libur-desc">${itemTerbaru.penceramah || 'Pengajian ditiadakan / libur untuk sesi ini.'}</div>
+                        <div class="libur-title">${itemTerbaru.kitab && !cekKitab.includes('libur') ? itemTerbaru.kitab : 'Sesi Ini Libur'}</div>
+                        <div class="libur-desc">${itemTerbaru.penceramah && !cekPenceramah.includes('libur') ? itemTerbaru.penceramah : 'Pengajian ditiadakan / libur untuk sesi ini.'}</div>
                     </div>
                 `;
                 return;
