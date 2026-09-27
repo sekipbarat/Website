@@ -197,7 +197,7 @@
             display: block;
         }
 
-        /* Tombol Pilihan Sesi (Bakda Subuh & HB) */
+        /* Tombol Pilihan Sesi Utama (Bakda Subuh & HB) */
         .session-tabs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -226,6 +226,39 @@
             background: var(--bg-card);
             color: var(--text-title);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Sub-Tabs untuk Menu HB (4 Sesi) */
+        .hb-sub-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 20px;
+            background: var(--badge-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .hb-sub-tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 4px;
+            font-family: inherit;
+            font-size: 0.775rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .hb-sub-tab-btn.active {
+            background: var(--bg-card);
+            color: var(--text-title);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--border-color);
         }
 
@@ -666,27 +699,27 @@
         <!-- MENU PEMUTAR SDC -->
         <div id="sdc" class="section-content active">
             
-            <!-- Tombol Pilihan Sesi (Bakda Subuh & HB) -->
+            <!-- Tombol Pilihan Sesi Utama (Bakda Subuh & HB) -->
             <div class="session-tabs">
-                <button class="session-tab-btn active" onclick="switchSession('subuh', this)">Bakda Subuh</button>
-                <button class="session-tab-btn" onclick="switchSession('hb', this)">HB</button>
+                <button class="session-tab-btn active" onclick="switchMainSession('subuh', this)">Bakda Subuh</button>
+                <button class="session-tab-btn" onclick="switchMainSession('hb', this)">HB</button>
             </div>
 
-            <!-- KONTEN BAKDA SUBUH -->
-            <div id="session-subuh" class="session-content-panel active">
+            <!-- KONTEN BAKDA SUBUH UTAMA -->
+            <div id="panel-main-subuh" class="main-session-panel">
                 <div class="sdc-header">
                     <h3>Arsip Pengajian SDC Sesi Subuh</h3>
                     <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
                 </div>
                 
-                <div id="announcementBox-subuh" class="announcement-box">
+                <div id="announcementBox-main-subuh" class="announcement-box">
                     <div class="announcement-header">📢</div>
                     <div class="announcement-marquee-wrapper">
-                        <div class="announcement-text" id="announcementText-subuh"></div>
+                        <div class="announcement-text" id="announcementText-main-subuh"></div>
                     </div>
                 </div>
 
-                <div class="audio-list" id="audioContainer-subuh">
+                <div class="audio-list" id="audioContainer-main-subuh">
                     <div class="loading-box">
                         <div class="loader-wave"><div></div><div></div><div></div></div>
                         <span class="loading-title">Mohon bersabar nggih</span>
@@ -695,17 +728,33 @@
                 </div>
             </div>
 
-            <!-- KONTEN HB -->
-            <div id="session-hb" class="session-content-panel" style="display: none;">
+            <!-- KONTEN HB (DENGAN 4 SUB-SESI) -->
+            <div id="panel-main-hb" class="main-session-panel" style="display: none;">
                 <div class="sdc-header">
-                    <h3>Arsip Pengajian SDC Sesi HB</h3>
+                    <h3>Arsip Pengajian SDC HB</h3>
                     <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
                 </div>
 
-                <div class="audio-list">
-                    <div class="audio-card" style="text-align: center; padding: 32px 18px;">
-                        <span class="loading-title" style="font-size: 1.1rem; margin-bottom: 4px;">Coming Soon</span>
-                        <span class="loading-subtext">Audio pengajian sesi HB akan segera hadir di sini.</span>
+                <!-- Sub-Tabs HB -->
+                <div class="hb-sub-tabs">
+                    <button class="hb-sub-tab-btn active" onclick="switchHbSession('Subuh', this)">Subuh</button>
+                    <button class="hb-sub-tab-btn" onclick="switchHbSession('Pagi', this)">Pagi</button>
+                    <button class="hb-sub-tab-btn" onclick="switchHbSession('Siang', this)">Siang</button>
+                    <button class="hb-sub-tab-btn" onclick="switchHbSession('Malam', this)">Malam</button>
+                </div>
+
+                <div id="announcementBox-hb" class="announcement-box">
+                    <div class="announcement-header">📢</div>
+                    <div class="announcement-marquee-wrapper">
+                        <div class="announcement-text" id="announcementText-hb"></div>
+                    </div>
+                </div>
+
+                <div class="audio-list" id="audioContainer-hb">
+                    <div class="loading-box">
+                        <div class="loader-wave"><div></div><div></div><div></div></div>
+                        <span class="loading-title">Mohon bersabar nggih</span>
+                        <span class="loading-subtext">Memuat data pengajian...</span>
                     </div>
                 </div>
             </div>
@@ -752,7 +801,13 @@
     </footer>
 
     <script>
+        // URL Google Apps Script Sesi Bakda Subuh Utama
         const URL_SUBUH = "https://script.google.com/macros/s/AKfycbz8J48kbjFFXuS_6zKVaxPO2ABz23WntlAAb3jSzAORtuNJXQb30nTUYXBHy0vuuEHt/exec";
+        
+        // URL Google Apps Script untuk Menu HB (Sudah terpasang)
+        const URL_HB_API = "https://script.google.com/macros/s/AKfycbwJcB3DmlVRbBv7_BbTRzu2It1f7MTvbPqOi7ndaf5bQo0-Ya-4wrGSPIyVyU0W-zGL/exec";
+
+        let loadedHbSessions = {};
 
         function formatTanggal(str) {
             if (!str) return '';
@@ -782,135 +837,144 @@
             return val;
         }
 
-        async function loadSessionData(url, type) {
-            const container = document.getElementById(`audioContainer-${type}`);
-            const announceBox = document.getElementById(`announcementBox-${type}`);
-            const announceText = document.getElementById(`announcementText-${type}`);
+        function renderAudioList(listData, containerId, announceBoxId, announceTextId) {
+            const container = document.getElementById(containerId);
+            const announceBox = document.getElementById(announceBoxId);
+            const announceText = document.getElementById(announceTextId);
+
+            let textPengumuman = "";
+            if (Array.isArray(listData)) {
+                const itemWithAnnounce = listData.find(item => item.pengumuman && item.pengumuman.toString().trim() !== "");
+                if (itemWithAnnounce) {
+                    textPengumuman = itemWithAnnounce.pengumuman;
+                }
+            }
+
+            if (textPengumuman && textPengumuman.toString().trim() !== "") {
+                announceText.innerText = textPengumuman.toString();
+                announceBox.classList.add('active');
+            } else {
+                announceBox.classList.remove('active');
+            }
+
+            if (listData.length === 0) {
+                container.innerHTML = '<div class="loading-box"><span class="loading-title">Tidak ada data pengajian untuk sesi ini.</span></div>';
+                return;
+            }
+
+            // 1. Pengajian Terbaru (Item Pertama)
+            const itemTerbaru = listData[0];
+            const sTanggal = formatTanggal(itemTerbaru.tanggal);
+            const sHalaman = formatHalaman(itemTerbaru.halaman);
+
+            let htmlContent = `
+                <div class="audio-card">
+                    <span class="date-info">${sTanggal}</span>
+                    <div class="card-top">
+                        <div class="row-1">
+                            ${itemTerbaru.penceramah ? `<span class="teacher-name">${itemTerbaru.penceramah}</span>` : ''}
+                            <span class="kitab-name">${itemTerbaru.kitab || ''}</span>
+                        </div>
+                        <div class="row-2">
+                            <span class="page-info">${sHalaman}</span>
+                        </div>
+                    </div>
+                    <audio controls class="native-audio-player">
+                        <source src="${itemTerbaru.fileAudio}" type="audio/mpeg">
+                        Browser Anda tidak mendukung pemutar audio.
+                    </audio>
+                </div>
+            `;
+
+            if (itemTerbaru.pisah && (itemTerbaru.pisah.toString().toLowerCase() === 'true' || itemTerbaru.pisah.toString().toLowerCase() === 'ya')) {
+                htmlContent += `
+                    <div class="audio-notice-box">
+                        <p class="notice-desc">Mohon maaf jika mengalami kendala audio putus-putus, karena biasanya koneksi SDC kurang stabil.</p>
+                    </div>
+                `;
+            }
+
+            htmlContent += `
+                <div class="previous-title-container">
+                    <h4>Pengajian Sebelumnya</h4>
+                    <div class="title-line"></div>
+                </div>
+            `;
+
+            // 2. Sisa Data Dikelompokkan Berdasarkan Kitab (Minimize Box)
+            const sisaData = listData.slice(1);
+            const groupedByKitab = {};
+
+            sisaData.forEach(item => {
+                const namaKitab = (item.kitab && item.kitab.toString().trim() !== "") ? item.kitab.toString().trim() : "Kitab Lainnya";
+                if (!groupedByKitab[namaKitab]) {
+                    groupedByKitab[namaKitab] = [];
+                }
+                groupedByKitab[namaKitab].push(item);
+            });
+
+            htmlContent += `<div class="kitab-group-container">`;
+
+            for (const [kitab, items] of Object.entries(groupedByKitab)) {
+                htmlContent += `
+                    <div class="kitab-group-box">
+                        <button class="kitab-group-header" onclick="toggleKitabGroup(this)">
+                            <span class="kitab-group-title">${kitab}</span>
+                            <span class="kitab-group-icon">&#9660;</span>
+                        </button>
+                        <div class="kitab-group-content">
+                `;
+
+                items.forEach(item => {
+                    const tgl = formatTanggal(item.tanggal);
+                    const hal = formatHalaman(item.halaman);
+                    htmlContent += `
+                        <div class="audio-card">
+                            <span class="date-info">${tgl}</span>
+                            <div class="card-top">
+                                <div class="row-1">
+                                    ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
+                                    <span class="kitab-name">${item.kitab || ''}</span>
+                                </div>
+                                <div class="row-2">
+                                    <span class="page-info">${hal}</span>
+                                </div>
+                            </div>
+                            <audio controls class="native-audio-player">
+                                <source src="${item.fileAudio}" type="audio/mpeg">
+                                Browser Anda tidak mendukung pemutar audio.
+                            </audio>
+                        </div>
+                    `;
+                });
+
+                htmlContent += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            htmlContent += `</div>`;
+            container.innerHTML = htmlContent;
+        }
+
+        async function loadSessionData(url, containerId, announceBoxId, announceTextId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="loading-box">
+                    <div class="loader-wave"><div></div><div></div><div></div></div>
+                    <span class="loading-title">Mohon bersabar nggih</span>
+                    <span class="loading-subtext">Memuat data pengajian...</span>
+                </div>
+            `;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                let textPengumuman = "";
-                if (Array.isArray(data)) {
-                    const itemWithAnnounce = data.find(item => item.pengumuman && item.pengumuman.toString().trim() !== "");
-                    if (itemWithAnnounce) {
-                        textPengumuman = itemWithAnnounce.pengumuman;
-                    }
-                } else if (data.pengumuman) {
-                    textPengumuman = data.pengumuman;
-                }
-
-                if (textPengumuman && textPengumuman.toString().trim() !== "") {
-                    announceText.innerText = textPengumuman.toString();
-                    announceBox.classList.add('active');
-                } else {
-                    announceBox.classList.remove('active');
-                }
-
                 const listData = Array.isArray(data) ? data : (data.audios || []);
-                if (listData.length === 0) {
-                    container.innerHTML = '<div class="loading-box"><span class="loading-title">Tidak ada data pengajian.</span></div>';
-                    return;
-                }
-
-                // 1. Pengajian Hari Ini (Item Pertama)
-                const itemTerbaru = listData[0];
-                const sTanggal = formatTanggal(itemTerbaru.tanggal);
-                const sHalaman = formatHalaman(itemTerbaru.halaman);
-
-                let htmlContent = `
-                    <div class="audio-card">
-                        <span class="date-info">${sTanggal}</span>
-                        <div class="card-top">
-                            <div class="row-1">
-                                ${itemTerbaru.penceramah ? `<span class="teacher-name">${itemTerbaru.penceramah}</span>` : ''}
-                                <span class="kitab-name">${itemTerbaru.kitab || ''}</span>
-                            </div>
-                            <div class="row-2">
-                                <span class="page-info">${sHalaman}</span>
-                            </div>
-                        </div>
-                        <audio controls class="native-audio-player">
-                            <source src="${itemTerbaru.fileAudio}" type="audio/mpeg">
-                            Browser Anda tidak mendukung pemutar audio.
-                        </audio>
-                    </div>
-                `;
-
-                if (itemTerbaru.pisah && (itemTerbaru.pisah.toString().toLowerCase() === 'true' || itemTerbaru.pisah.toString().toLowerCase() === 'ya')) {
-                    htmlContent += `
-                        <div class="audio-notice-box">
-                            <p class="notice-desc">Mohon maaf jika mengalami kendala audio putus-putus, karena biasanya koneksi SDC kurang stabil.</p>
-                        </div>
-                    `;
-                }
-
-                htmlContent += `
-                    <div class="previous-title-container">
-                        <h4>Pengajian Sebelumnya</h4>
-                        <div class="title-line"></div>
-                    </div>
-                `;
-
-                // 2. Sisa Data Dikelompokkan Berdasarkan Kitab (Minimize Box)
-                const sisaData = listData.slice(1);
-                const groupedByKitab = {};
-
-                sisaData.forEach(item => {
-                    const namaKitab = (item.kitab && item.kitab.toString().trim() !== "") ? item.kitab.toString().trim() : "Kitab Lainnya";
-                    if (!groupedByKitab[namaKitab]) {
-                        groupedByKitab[namaKitab] = [];
-                    }
-                    groupedByKitab[namaKitab].push(item);
-                });
-
-                htmlContent += `<div class="kitab-group-container">`;
-
-                for (const [kitab, items] of Object.entries(groupedByKitab)) {
-                    htmlContent += `
-                        <div class="kitab-group-box">
-                            <button class="kitab-group-header" onclick="toggleKitabGroup(this)">
-                                <span class="kitab-group-title">${kitab}</span>
-                                <span class="kitab-group-icon">&#9660;</span>
-                            </button>
-                            <div class="kitab-group-content">
-                    `;
-
-                    items.forEach(item => {
-                        const tgl = formatTanggal(item.tanggal);
-                        const hal = formatHalaman(item.halaman);
-                        htmlContent += `
-                            <div class="audio-card">
-                                <span class="date-info">${tgl}</span>
-                                <div class="card-top">
-                                    <div class="row-1">
-                                        ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
-                                        <span class="kitab-name">${item.kitab || ''}</span>
-                                    </div>
-                                    <div class="row-2">
-                                        <span class="page-info">${hal}</span>
-                                    </div>
-                                </div>
-                                <audio controls class="native-audio-player">
-                                    <source src="${item.fileAudio}" type="audio/mpeg">
-                                    Browser Anda tidak mendukung pemutar audio.
-                                </audio>
-                            </div>
-                        `;
-                    });
-
-                    htmlContent += `
-                            </div>
-                        </div>
-                    `;
-                }
-
-                htmlContent += `</div>`;
-                container.innerHTML = htmlContent;
-
+                renderAudioList(listData, containerId, announceBoxId, announceTextId);
             } catch (error) {
-                container.innerHTML = '<div class="loading-box"><span class="loading-title" style="color:#ef4444;">Gagal memuat data audio.</span><span class="loading-subtext">Silakan coba refresh halaman Anda.</span></div>';
+                container.innerHTML = '<div class="loading-box"><span class="loading-title" style="color:#ef4444;">Gagal memuat data audio.</span><span class="loading-subtext">Silakan periksa koneksi atau URL API Anda.</span></div>';
             }
         }
 
@@ -919,17 +983,34 @@
             groupCard.classList.toggle('open');
         }
 
-        // Panggil data untuk sesi Subuh
-        loadSessionData(URL_SUBUH, 'subuh');
+        // Load data awal untuk Sesi Bakda Subuh Utama
+        loadSessionData(URL_SUBUH, 'audioContainer-main-subuh', 'announcementBox-main-subuh', 'announcementText-main-subuh');
 
-        function switchSession(sessionName, btnElement) {
+        function switchMainSession(sessionName, btnElement) {
             document.querySelectorAll('.session-tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
 
-            document.querySelectorAll('.session-content-panel').forEach(panel => {
+            document.querySelectorAll('.main-session-panel').forEach(panel => {
                 panel.style.display = 'none';
             });
-            document.getElementById(`session-${sessionName}`).style.display = 'block';
+            document.getElementById(`panel-main-${sessionName}`).style.display = 'block';
+
+            // Jika pindah ke tab HB dan belum pernah diload, otomatis load sesi Subuh di HB
+            if (sessionName === 'hb' && !loadedHbSessions['Subuh']) {
+                loadHbSessionData('Subuh');
+            }
+        }
+
+        function switchHbSession(sheetName, btnElement) {
+            document.querySelectorAll('.hb-sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            loadHbSessionData(sheetName);
+        }
+
+        function loadHbSessionData(sheetName) {
+            const targetUrl = `${URL_HB_API}?sheet=${sheetName}`;
+            loadSessionData(targetUrl, 'audioContainer-hb', 'announcementBox-hb', 'announcementText-hb');
+            loadedHbSessions[sheetName] = true;
         }
 
         function toggleMenu() {
