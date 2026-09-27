@@ -517,7 +517,7 @@
             background-color: var(--border-color);
         }
 
-        /* Loading Box */
+        /* Loading & Libur Box */
         .loading-box {
             display: flex;
             flex-direction: column;
@@ -572,6 +572,35 @@
             font-size: 0.775rem;
             font-weight: 400;
             line-height: 1.4;
+        }
+
+        /* Tampilan Khusus Libur */
+        .libur-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .libur-icon {
+            font-size: 2rem;
+            margin-bottom: 4px;
+        }
+
+        .libur-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-title);
+        }
+
+        .libur-desc {
+            font-size: 0.825rem;
+            color: var(--text-muted);
         }
 
         /* Menu Dokumentasi & Tentang */
@@ -801,10 +830,7 @@
     </footer>
 
     <script>
-        // URL Google Apps Script Sesi Bakda Subuh Utama
         const URL_SUBUH = "https://script.google.com/macros/s/AKfycbz8J48kbjFFXuS_6zKVaxPO2ABz23WntlAAb3jSzAORtuNJXQb30nTUYXBHy0vuuEHt/exec";
-        
-        // URL Google Apps Script untuk Menu HB (Sudah terpasang)
         const URL_HB_API = "https://script.google.com/macros/s/AKfycbwJcB3DmlVRbBv7_BbTRzu2It1f7MTvbPqOi7ndaf5bQo0-Ya-4wrGSPIyVyU0W-zGL/exec";
 
         let loadedHbSessions = {};
@@ -812,6 +838,7 @@
         function formatTanggal(str) {
             if (!str) return '';
             const val = str.toString().trim();
+            if (val.toLowerCase() === 'libur') return 'Libur';
             if (val.includes('T') && val.includes('Z')) {
                 const d = new Date(val);
                 if (!isNaN(d.getTime())) {
@@ -828,6 +855,7 @@
         function formatHalaman(str) {
             if (!str) return '';
             const val = str.toString().trim();
+            if (val.toLowerCase() === 'libur') return '';
             if (val.includes('T') && val.includes('Z')) {
                 const d = new Date(val);
                 if (!isNaN(d.getTime())) {
@@ -858,12 +886,33 @@
             }
 
             if (listData.length === 0) {
-                container.innerHTML = '<div class="loading-box"><span class="loading-title">Tidak ada data pengajian untuk sesi ini.</span></div>';
+                container.innerHTML = `
+                    <div class="libur-box">
+                        <div class="libur-icon">🏖️</div>
+                        <div class="libur-title">Sesi Ini Libur</div>
+                        <div class="libur-desc">Belum ada jadwal atau pengajian diliburkan untuk sementara waktu.</div>
+                    </div>
+                `;
                 return;
             }
 
-            // 1. Pengajian Terbaru (Item Pertama)
+            // Cek apakah data pertama berisi keterangan Libur
             const itemTerbaru = listData[0];
+            const cekTeks = (itemTerbaru.tanggal || '').toString().toLowerCase();
+            const cekKitab = (itemTerbaru.kitab || '').toString().toLowerCase();
+            const cekPenceramah = (itemTerbaru.penceramah || '').toString().toLowerCase();
+
+            if (cekTeks.includes('libur') || cekKitab.includes('libur') || cekPenceramah.includes('libur')) {
+                container.innerHTML = `
+                    <div class="libur-box">
+                        <div class="libur-icon">🏖️</div>
+                        <div class="libur-title">${itemTerbaru.kitab || 'Sesi Ini Libur'}</div>
+                        <div class="libur-desc">${itemTerbaru.penceramah || 'Pengajian ditiadakan / libur untuk sesi ini.'}</div>
+                    </div>
+                `;
+                return;
+            }
+
             const sTanggal = formatTanggal(itemTerbaru.tanggal);
             const sHalaman = formatHalaman(itemTerbaru.halaman);
 
@@ -894,67 +943,69 @@
                 `;
             }
 
-            htmlContent += `
-                <div class="previous-title-container">
-                    <h4>Pengajian Sebelumnya</h4>
-                    <div class="title-line"></div>
-                </div>
-            `;
-
-            // 2. Sisa Data Dikelompokkan Berdasarkan Kitab (Minimize Box)
-            const sisaData = listData.slice(1);
-            const groupedByKitab = {};
-
-            sisaData.forEach(item => {
-                const namaKitab = (item.kitab && item.kitab.toString().trim() !== "") ? item.kitab.toString().trim() : "Kitab Lainnya";
-                if (!groupedByKitab[namaKitab]) {
-                    groupedByKitab[namaKitab] = [];
-                }
-                groupedByKitab[namaKitab].push(item);
-            });
-
-            htmlContent += `<div class="kitab-group-container">`;
-
-            for (const [kitab, items] of Object.entries(groupedByKitab)) {
+            if (listData.length > 1) {
                 htmlContent += `
-                    <div class="kitab-group-box">
-                        <button class="kitab-group-header" onclick="toggleKitabGroup(this)">
-                            <span class="kitab-group-title">${kitab}</span>
-                            <span class="kitab-group-icon">&#9660;</span>
-                        </button>
-                        <div class="kitab-group-content">
-                `;
-
-                items.forEach(item => {
-                    const tgl = formatTanggal(item.tanggal);
-                    const hal = formatHalaman(item.halaman);
-                    htmlContent += `
-                        <div class="audio-card">
-                            <span class="date-info">${tgl}</span>
-                            <div class="card-top">
-                                <div class="row-1">
-                                    ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
-                                    <span class="kitab-name">${item.kitab || ''}</span>
-                                </div>
-                                <div class="row-2">
-                                    <span class="page-info">${hal}</span>
-                                </div>
-                            </div>
-                            <audio controls class="native-audio-player">
-                                <source src="${item.fileAudio}" type="audio/mpeg">
-                                Browser Anda tidak mendukung pemutar audio.
-                            </audio>
-                        </div>
-                    `;
-                });
-
-                htmlContent += `
-                        </div>
+                    <div class="previous-title-container">
+                        <h4>Pengajian Sebelumnya</h4>
+                        <div class="title-line"></div>
                     </div>
                 `;
+
+                const sisaData = listData.slice(1);
+                const groupedByKitab = {};
+
+                sisaData.forEach(item => {
+                    const namaKitab = (item.kitab && item.kitab.toString().trim() !== "") ? item.kitab.toString().trim() : "Kitab Lainnya";
+                    if (!groupedByKitab[namaKitab]) {
+                        groupedByKitab[namaKitab] = [];
+                    }
+                    groupedByKitab[namaKitab].push(item);
+                });
+
+                htmlContent += `<div class="kitab-group-container">`;
+
+                for (const [kitab, items] of Object.entries(groupedByKitab)) {
+                    htmlContent += `
+                        <div class="kitab-group-box">
+                            <button class="kitab-group-header" onclick="toggleKitabGroup(this)">
+                                <span class="kitab-group-title">${kitab}</span>
+                                <span class="kitab-group-icon">&#9660;</span>
+                            </button>
+                            <div class="kitab-group-content">
+                    `;
+
+                    items.forEach(item => {
+                        const tgl = formatTanggal(item.tanggal);
+                        const hal = formatHalaman(item.halaman);
+                        htmlContent += `
+                            <div class="audio-card">
+                                <span class="date-info">${tgl}</span>
+                                <div class="card-top">
+                                    <div class="row-1">
+                                        ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
+                                        <span class="kitab-name">${item.kitab || ''}</span>
+                                    </div>
+                                    <div class="row-2">
+                                        <span class="page-info">${hal}</span>
+                                    </div>
+                                </div>
+                                <audio controls class="native-audio-player">
+                                    <source src="${item.fileAudio}" type="audio/mpeg">
+                                    Browser Anda tidak mendukung pemutar audio.
+                                </audio>
+                            </div>
+                        `;
+                    });
+
+                    htmlContent += `
+                            </div>
+                        </div>
+                    `;
+                }
+
+                htmlContent += `</div>`;
             }
 
-            htmlContent += `</div>`;
             container.innerHTML = htmlContent;
         }
 
@@ -983,7 +1034,6 @@
             groupCard.classList.toggle('open');
         }
 
-        // Load data awal untuk Sesi Bakda Subuh Utama
         loadSessionData(URL_SUBUH, 'audioContainer-main-subuh', 'announcementBox-main-subuh', 'announcementText-main-subuh');
 
         function switchMainSession(sessionName, btnElement) {
@@ -995,7 +1045,6 @@
             });
             document.getElementById(`panel-main-${sessionName}`).style.display = 'block';
 
-            // Jika pindah ke tab HB dan belum pernah diload, otomatis load sesi Subuh di HB
             if (sessionName === 'hb' && !loadedHbSessions['Subuh']) {
                 loadHbSessionData('Subuh');
             }
