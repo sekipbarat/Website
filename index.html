@@ -36,7 +36,7 @@
         }
 
         header {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-align: center;
             width: 100%;
             max-width: 780px;
@@ -62,31 +62,14 @@
 
         h1 { font-size: 1rem; font-weight: 700; color: var(--text-title); }
 
-        /* Kotak tombol khusus menuju HB */
-        .btn-hb-box {
+        .brand-badge {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-muted);
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 12px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-title);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .btn-hb-box:hover { background: var(--badge-bg); }
-        .btn-hb-box span.badge-mini {
-            background: var(--badge-bg);
-            border: 1px solid var(--border-color);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            color: var(--text-muted);
         }
 
         .marquee-container {
@@ -114,6 +97,43 @@
         @keyframes scrollText {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
+        }
+
+        /* Tab Navigasi di Atas Pengajian */
+        .nav-tabs-container {
+            width: 100%;
+            max-width: 780px;
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 16px;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-muted);
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--accent-black);
+            color: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: var(--badge-bg);
+            color: var(--text-title);
         }
 
         .main-wrapper {
@@ -214,11 +234,9 @@
             <div class="title-box">
                 <h1>Sekip Barat</h1>
             </div>
-            <!-- Kotak Tombol Tautan ke HB -->
-            <a href="https://hb.sekipbarat.my.id" class="btn-hb-box">
-                <span>Arsip HB</span>
-                <span class="badge-mini">Pindah ↗</span>
-            </a>
+            <div class="brand-badge">
+                Bakda Subuh
+            </div>
         </div>
         <div class="marquee-container">
             <div class="marquee-track">
@@ -228,6 +246,12 @@
             </div>
         </div>
     </header>
+
+    <!-- Tab Navigasi di Atas Pengajian -->
+    <div class="nav-tabs-container">
+        <a href="https://sekipbarat.my.id" class="nav-tab active">Subuh</a>
+        <a href="https://hb.sekipbarat.my.id" class="nav-tab">HB</a>
+    </div>
 
     <div class="main-wrapper">
         <div class="sdc-header">
