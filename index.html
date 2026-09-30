@@ -630,7 +630,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz8J48kbjFFXuS_6zKVaxPO2ABz23WntlAAb3jSzAORtuNJXQb30nTUYXBHy0vuuEHt/exec";
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxal4LPHrUp81FAfr-fkvkI2ljQhhKXvnOQGs7rgN4T2h9ZgCjXnX-f_NSblkhDaBB3/exec";
 
         function formatTanggal(str) {
             if (!str) return '';
@@ -693,7 +693,6 @@
                     const tanggalTampil = formatTanggal(item.tanggal);
                     const halamanTampil = formatHalaman(item.halaman);
                     
-                    // Memastikan properti file audio dibaca dengan benar dari berbagai variasi key spreadsheet
                     const audioUrl = item.file_audio ? item.file_audio.toString().trim() : (item.fileAudio ? item.fileAudio.toString().trim() : (item.fileaudio ? item.fileaudio.toString().trim() : ""));
 
                     htmlContent += `
