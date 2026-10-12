@@ -471,15 +471,16 @@
             outline-offset: 2px;
         }
 
-        /* Teknik iframe tersembunyi agar API YouTube tetap aktif berjalan tanpa tampil sebagai video */
+        /* Menyembunyikan iframe YouTube agar pemutar tidak terlihat sama sekali namun tetap aktif */
         .hidden-yt-container {
-            position: absolute;
-            width: 1px;
-            height: 1px;
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            width: 0;
+            height: 0;
             overflow: hidden;
-            opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            clip: rect(0, 0, 0, 0);
         }
 
         .youtube-pending {
@@ -868,7 +869,7 @@
             if (idVideo) {
                 const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
                 player = `
-                    <!-- Container YouTube tersembunyi agar API berfungsi di latar belakang tanpa tampak sebagai video -->
+                    <!-- Container YouTube disembunyikan total di luar layar agar halaman bersih murni audio -->
                     <div class="hidden-yt-container">
                         <iframe
                             id="${playerId}"
@@ -972,7 +973,7 @@
     function initSDCYouTubePlayers() {
         if (!(window.YT && window.YT.Player)) return;
         sdcYTApiReady = true;
-        document.querySelectorAll(". hidden-yt-container iframe[id^='sdc-yt-']").forEach(frame => {
+        document.querySelectorAll(".hidden-yt-container iframe[id^='sdc-yt-']").forEach(frame => {
             if (sdcYTPlayers[frame.id]) return;
             try {
                 sdcYTPlayers[frame.id] = new YT.Player(frame, {
@@ -1021,7 +1022,7 @@
         const player = sdcYTPlayers[pId];
         if (!player || typeof player.getPlayerState !== "function") return;
 
-        // Jeda player lain yang sedang aktif supaya tidak tabrakan suara
+        // Jeda player lain supaya suara tidak bertabrakan
         Object.keys(sdcYTPlayers).forEach(otherId => {
             if (otherId !== pId) {
                 try {
