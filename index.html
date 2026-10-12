@@ -263,55 +263,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Pemutar YouTube responsif dan tetap terlihat agar bisa diputar */
-        .youtube-player-wrap {
-            position: relative;
-            display: block;
-            width: 100%;
-            min-width: 200px;
-            aspect-ratio: 16 / 9;
-            min-height: 200px;
-            overflow: hidden;
-            border-radius: 10px;
-            background: #18181b;
-        }
-
-        .youtube-player-wrap iframe {
-            position: absolute;
-            inset: 0;
-            display: block;
-            width: 100%;
-            height: 100%;
-            min-height: 200px;
-            border: 0;
-            border-radius: 10px;
-        }
-
-        .youtube-open-link {
-            display: inline-flex;
-            align-self: flex-start;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-decoration: none;
-            padding: 2px 0;
-        }
-
-        .youtube-open-link:hover {
-            color: var(--text-title);
-            text-decoration: underline;
-        }
-
-        .youtube-pending {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-            border: 1px dashed var(--border-color);
-            border-radius: 10px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
         /* Player Box */
         .audio-list {
             display: flex;
@@ -321,18 +272,20 @@
 
         .audio-card {
             position: relative;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+            border: 1px solid #e4e4e7;
+            border-radius: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            transition: border-color 0.2s;
+            gap: 13px;
+            box-shadow: 0 5px 18px rgba(24, 24, 27, .045);
+            transition: border-color .2s, box-shadow .2s, transform .2s;
         }
 
         .audio-card:hover {
-            border-color: var(--border-hover);
+            border-color: #c4c4cc;
+            box-shadow: 0 8px 24px rgba(24, 24, 27, .07);
         }
 
         .date-info {
@@ -393,48 +346,179 @@
             font-weight: 500;
         }
 
-        .native-audio-player {
-            width: 100%;
-            height: 42px;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .audio-notice-box {
-            background-color: #f4f4f5;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        /* --- STYLING AUDIO PLAYER CUSTOM (MINIMALIS & NON-VIDEO) --- */
+        .custom-audio-player {
+            background: #f8fafc;
+            border: 1px solid #e4e4e7;
+            border-radius: 12px;
             padding: 12px 14px;
-            margin: 4px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .audio-notice-box .notice-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.45;
-            font-weight: 400;
-        }
-
-        .previous-title-container {
+        .player-main-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 14px 0 4px 0;
+            gap: 12px;
         }
 
-        .previous-title-container h4 {
-            font-size: 0.775rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            white-space: nowrap;
+        .play-pause-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-black);
+            color: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.1s, background 0.2s;
         }
 
-        .previous-title-container .title-line {
+        .play-pause-btn:hover {
+            background: #27272a;
+        }
+
+        .play-pause-btn:active {
+            transform: scale(0.95);
+        }
+
+        .play-pause-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .progress-container {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .progress-bar-wrapper {
+            position: relative;
+            width: 100%;
+            height: 6px;
+            background: #e4e4e7;
+            border-radius: 3px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--accent-black);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .progress-slider {
+            position: absolute;
+            top: -4px;
+            left: 0;
+            width: 100%;
+            height: 14px;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.725rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .audio-sub-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #e4e4e7;
+            padding-top: 8px;
+            margin-top: 2px;
+        }
+
+        .speed-label {
+            color: var(--text-muted);
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .speed-select {
+            appearance: auto;
+            border: 1px solid #d4d4d8;
+            background: #ffffff;
+            color: var(--text-title);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font: inherit;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .speed-select:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+
+        /* Teknik iframe tersembunyi agar API YouTube tetap aktif berjalan tanpa tampil sebagai video */
+        .hidden-yt-container {
+            position: absolute;
+            width: 1px;
             height: 1px;
-            background-color: var(--border-color);
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        .youtube-pending {
+            width: 100%;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px dashed var(--border-hover);
+            background: var(--badge-bg);
+            color: var(--text-muted);
+            font-size: .85rem;
+            text-align: center;
+        }
+
+        .player-caption {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: #71717a;
+            font-size: .78rem;
+            line-height: 1.5;
+            padding: 0 2px;
+        }
+
+        .player-caption .player-dot {
+            width: 7px;
+            height: 7px;
+            flex: 0 0 7px;
+            border-radius: 50%;
+            background: #16a34a;
+        }
+
+        @media (max-width: 480px) {
+            .audio-card { padding: 14px; gap: 11px; border-radius: 14px; }
+            .date-info { position: static; align-self: flex-start; margin-bottom: -2px; }
+            .card-top { padding-right: 0; }
         }
 
         /* --- DESAIN ANIMASI & TEKS LOADING RAPI --- */
@@ -703,27 +787,16 @@
 
     // ==========================================
     // MENGAMBIL ID VIDEO YOUTUBE
-    // Mendukung:
-    // youtube.com/watch?v=...
-    // youtu.be/...
-    // youtube.com/shorts/...
-    // youtube.com/live/...
-    // youtube.com/embed/...
     // ==========================================
 
     function youtubeId(url) {
         const value = String(url || "").trim();
-
         if (!value) return "";
-
         try {
             const parsed = new URL(value);
             const hostname = parsed.hostname.toLowerCase();
 
-            if (
-                hostname === "youtu.be" ||
-                hostname === "www.youtu.be"
-            ) {
+            if (hostname === "youtu.be" || hostname === "www.youtu.be") {
                 return parsed.pathname.split("/").filter(Boolean)[0] || "";
             }
 
@@ -738,9 +811,7 @@
                 if (parsed.pathname === "/watch") {
                     return parsed.searchParams.get("v") || "";
                 }
-
                 const parts = parsed.pathname.split("/").filter(Boolean);
-
                 if (["embed", "shorts", "live"].includes(parts[0])) {
                     return parts[1] || "";
                 }
@@ -748,8 +819,18 @@
         } catch (error) {
             console.warn("Link YouTube tidak valid:", error);
         }
-
         return "";
+    }
+
+
+    // ==========================================
+    // FORMAT DETIK KE M:SS
+    // ==========================================
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0) return "0:00";
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
 
@@ -759,29 +840,21 @@
 
     function renderPengajian(rows) {
         const container = document.getElementById("audioContainer");
-
         if (!container) return;
 
         if (!rows.length) {
             container.innerHTML = `
                 <div class="loading-box">
-                    <span class="loading-title">
-                        Belum ada arsip pengajian
-                    </span>
-
-                    <span class="loading-subtext">
-                        Data akan muncul setelah tersedia di Google Sheets.
-                    </span>
+                    <span class="loading-title">Belum ada arsip pengajian</span>
+                    <span class="loading-subtext">Data akan muncul setelah tersedia di Google Sheets.</span>
                 </div>
             `;
-
             return;
         }
 
-        // Data terbaru ditampilkan paling atas.
         const dataTerbaru = [...rows].reverse();
 
-        container.innerHTML = dataTerbaru.map(item => {
+        container.innerHTML = dataTerbaru.map((item, index) => {
             const tanggal = escapeHTML(item.hari_tanggal || "");
             const materi = escapeHTML(item.materi || "");
             const halaman = escapeHTML(item.halaman || "");
@@ -793,93 +866,243 @@
             let player;
 
             if (idVideo) {
+                const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
                 player = `
-                    <div class="youtube-player-wrap">
+                    <!-- Container YouTube tersembunyi agar API berfungsi di latar belakang tanpa tampak sebagai video -->
+                    <div class="hidden-yt-container">
                         <iframe
-                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?playsinline=1&rel=0"
-                            title="Pemutar pengajian SDC Subuh"
-                            width="480"
-                            height="270"
+                            id="${playerId}"
+                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?enablejsapi=1&playsinline=1&controls=0&disablekb=1&modestbranding=1&rel=0&origin=${encodeURIComponent(location.origin)}"
+                            title="Pemutar audio pengajian"
                             loading="lazy"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen>
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
                         </iframe>
                     </div>
 
-                    <a
-                        class="youtube-open-link"
-                        href="https://www.youtube.com/watch?v=${encodeURIComponent(idVideo)}"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Buka di YouTube ↗
-                    </a>
+                    <div class="custom-audio-player" id="player-box-${playerId}">
+                        <div class="player-main-controls">
+                            <button class="play-pause-btn" id="btn-play-${playerId}" onclick="toggleSDCPlay('${playerId}')" aria-label="Putar / Jeda">
+                                <!-- Ikon Play -->
+                                <svg id="icon-play-${playerId}" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <div class="progress-container">
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-bar-fill" id="progress-fill-${playerId}"></div>
+                                    <input type="range" class="progress-slider" id="slider-${playerId}" min="0" max="100" value="0" step="0.1" oninput="seekSDCAudio('${playerId}', this.value)">
+                                </div>
+                                <div class="time-info">
+                                    <span id="current-time-${playerId}">0:00</span>
+                                    <span id="duration-${playerId}">0:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="audio-sub-controls">
+                            <label class="speed-label" for="speed-${playerId}">Kecepatan</label>
+                            <select class="speed-select" id="speed-${playerId}" aria-label="Kecepatan pemutaran" onchange="setSDCPlaybackRate('${playerId}', this.value)">
+                                <option value="0.5">0,5×</option>
+                                <option value="0.75">0,75×</option>
+                                <option value="1" selected>1×</option>
+                                <option value="1.25">1,25×</option>
+                                <option value="1.5">1,5×</option>
+                                <option value="1.75">1,75×</option>
+                                <option value="2">2×</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="player-caption">
+                        <span class="player-dot"></span>
+                        Audio Player Minimalis (Aman dari tombol unduhan).
+                    </div>
                 `;
             } else {
                 player = `
                     <div class="youtube-pending">
-                        Video belum tersedia
+                        Audio belum tersedia
                     </div>
                 `;
             }
 
             return `
                 <article class="audio-card">
-
-                    <span class="date-info">
-                        ${tanggal}
-                    </span>
-
+                    <span class="date-info">${tanggal}</span>
                     <div class="card-top">
-
                         <div class="row-1">
-
-                            ${pengajar
-                                ? `<span class="teacher-name">${pengajar}</span>`
-                                : ""
-                            }
-
-                            <span class="kitab-name">
-                                ${materi}
-                            </span>
-
+                            ${pengajar ? `<span class="teacher-name">${pengajar}</span>` : ""}
+                            <span class="kitab-name">${materi}</span>
                         </div>
-
-                        ${halaman
-                            ? `
-                                <div class="row-2">
-                                    <span class="page-info">
-                                        Halaman ${halaman}
-                                    </span>
-                                </div>
-                            `
-                            : ""
-                        }
-
+                        ${halaman ? `<div class="row-2"><span class="page-info">Halaman ${halaman}</span></div>` : ""}
                     </div>
-
                     ${player}
-
                 </article>
             `;
         }).join("");
+
+        initSDCYouTubePlayers();
     }
 
 
     // ==========================================
-    // MENGAMBIL DATA DARI GOOGLE SHEETS
-    //
-    // Kolom Sheet1:
-    // A = hari&tanggal
-    // B = materi
-    // C = halaman
-    // D = pengajar
-    // E = link
+    // KONTROL YOUTUBE API & CUSTOM PLAYER
     // ==========================================
+
+    const sdcYTPlayers = {};
+    const playerIntervals = {};
+    let sdcYTApiReady = false;
+    let sdcYTApiLoading = false;
+
+    function loadSDCYouTubeAPI() {
+        if (window.YT && window.YT.Player) {
+            sdcYTApiReady = true;
+            initSDCYouTubePlayers();
+            return;
+        }
+        if (sdcYTApiLoading) return;
+        sdcYTApiLoading = true;
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+        const previousCallback = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+            if (typeof previousCallback === "function") previousCallback();
+            sdcYTApiReady = true;
+            initSDCYouTubePlayers();
+        };
+    }
+
+    function initSDCYouTubePlayers() {
+        if (!(window.YT && window.YT.Player)) return;
+        sdcYTApiReady = true;
+        document.querySelectorAll(". hidden-yt-container iframe[id^='sdc-yt-']").forEach(frame => {
+            if (sdcYTPlayers[frame.id]) return;
+            try {
+                sdcYTPlayers[frame.id] = new YT.Player(frame, {
+                    events: {
+                        onReady: function (event) {
+                            const pId = frame.id;
+                            const duration = event.target.getDuration();
+                            const durElem = document.getElementById("duration-" + pId);
+                            if (durElem) durElem.textContent = formatTime(duration);
+
+                            const select = document.getElementById("speed-" + pId);
+                            if (select) {
+                                const rates = event.target.getAvailablePlaybackRates();
+                                Array.from(select.options).forEach(option => {
+                                    option.disabled = !rates.includes(Number(option.value));
+                                });
+                                select.value = "1";
+                            }
+                        },
+                        onStateChange: function (event) {
+                            const pId = frame.id;
+                            handlePlayerStateChange(pId, event.data);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.warn("Inisialisasi player YouTube gagal:", error);
+            }
+        });
+    }
+
+    function handlePlayerStateChange(pId, state) {
+        const btnIcon = document.getElementById(`icon-play-${pId}`);
+        if (!btnIcon) return;
+
+        if (state === YT.PlayerState.PLAYING) {
+            btnIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            startProgressInterval(pId);
+        } else {
+            btnIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            stopProgressInterval(pId);
+        }
+    }
+
+    function toggleSDCPlay(pId) {
+        const player = sdcYTPlayers[pId];
+        if (!player || typeof player.getPlayerState !== "function") return;
+
+        // Jeda player lain yang sedang aktif supaya tidak tabrakan suara
+        Object.keys(sdcYTPlayers).forEach(otherId => {
+            if (otherId !== pId) {
+                try {
+                    if (sdcYTPlayers[otherId].getPlayerState() === YT.PlayerState.PLAYING) {
+                        sdcYTPlayers[otherId].pauseVideo();
+                    }
+                } catch(e) {}
+            }
+        });
+
+        const currentState = player.getPlayerState();
+        if (currentState === YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
+    }
+
+    function startProgressInterval(pId) {
+        if (playerIntervals[pId]) clearInterval(playerIntervals[pId]);
+        playerIntervals[pId] = setInterval(() => {
+            const player = sdcYTPlayers[pId];
+            if (!player || typeof player.getCurrentTime !== "function") return;
+
+            const currentTime = player.getCurrentTime();
+            const duration = player.getDuration();
+
+            const curElem = document.getElementById(`current-time-${pId}`);
+            const fillElem = document.getElementById(`progress-fill-${pId}`);
+            const sliderElem = document.getElementById(`slider-${pId}`);
+
+            if (curElem) curElem.textContent = formatTime(currentTime);
+            if (duration > 0) {
+                const percent = (currentTime / duration) * 100;
+                if (fillElem) fillElem.style.width = `${percent}%`;
+                if (sliderElem) sliderElem.value = percent;
+            }
+        }, 500);
+    }
+
+    function stopProgressInterval(pId) {
+        if (playerIntervals[pId]) {
+            clearInterval(playerIntervals[pId]);
+            playerIntervals[pId] = null;
+        }
+    }
+
+    function seekSDCAudio(pId, value) {
+        const player = sdcYTPlayers[pId];
+        if (!player || typeof player.getDuration !== "function") return;
+        const duration = player.getDuration();
+        const seekToTime = (value / 100) * duration;
+        player.seekTo(seekToTime, true);
+        
+        const fillElem = document.getElementById(`progress-fill-${pId}`);
+        if (fillElem) fillElem.style.width = `${value}%`;
+        const curElem = document.getElementById(`current-time-${pId}`);
+        if (curElem) curElem.textContent = formatTime(seekToTime);
+    }
+
+    function setSDCPlaybackRate(playerId, rate) {
+        const player = sdcYTPlayers[playerId];
+        if (!player || typeof player.setPlaybackRate !== "function") return;
+        try {
+            player.setPlaybackRate(Number(rate));
+        } catch (error) {
+            console.warn("Kecepatan pemutaran tidak dapat diubah:", error);
+        }
+    }
+
+    loadSDCYouTubeAPI();
+
+
+    // ==========================================
+    // MENGAMBIL DATA DARI GOOGLE SHEETS
+    // ==========================================
+
+    let lastSDCDataFingerprint = "";
 
     async function fetchAudioFromSheets() {
         const container = document.getElementById("audioContainer");
-
         if (!container) return;
 
         try {
@@ -893,100 +1116,35 @@
             }
 
             const data = await response.json();
-
-            // Mendukung respons berbentuk array langsung
-            // maupun objek yang memiliki rows, audios, atau data.
-
-            let rows = Array.isArray(data)
-                ? data
-                : (data.rows || data.audios || data.data || []);
-
-            // Mendukung data berbentuk array dua dimensi.
+            let rows = Array.isArray(data) ? data : (data.rows || data.audios || data.data || []);
 
             if (rows.length && Array.isArray(rows[0])) {
-                const headers = rows.shift().map(value =>
-                    String(value).trim().toLowerCase()
-                );
-
-                rows = rows.map(row =>
-                    Object.fromEntries(
-                        headers.map((header, index) => [
-                            header,
-                            row[index] ?? ""
-                        ])
-                    )
-                );
+                const headers = rows.shift().map(value => String(value).trim().toLowerCase());
+                rows = rows.map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] ?? ""])));
             }
 
-            // Samakan nama kolom dari Google Sheets
-            // agar dapat dibaca oleh website.
-
             rows = rows.map(item => ({
-                hari_tanggal:
-                    item["hari&tanggal"] ||
-                    item.hari_tanggal ||
-                    item.hari ||
-                    item.tanggal ||
-                    "",
-
-                materi:
-                    item.materi ||
-                    item.hadist ||
-                    item.Hadist ||
-                    "",
-
-                halaman:
-                    item.halaman ||
-                    "",
-
-                pengajar:
-                    item.pengajar ||
-                    "",
-
-                // Penting: kolom E di Sheet1 bernama "link".
-                // Link YouTube akan otomatis dibaca dari sini.
-
-                link:
-                    item.link ||
-                    item.link_youtube ||
-                    item["link youtube"] ||
-                    item.linkYouTube ||
-                    item.youtube ||
-                    ""
+                hari_tanggal: item["hari&tanggal"] || item.hari_tanggal || item.hari || item.tanggal || "",
+                materi: item.materi || item.hadist || item.Hadist || "",
+                halaman: item.halaman || "",
+                pengajar: item.pengajar || "",
+                link: item.link || item.link_youtube || item["link youtube"] || item.linkYouTube || item.youtube || ""
             }));
 
-            // Abaikan baris yang seluruh datanya kosong.
+            rows = rows.filter(item => item.hari_tanggal || item.materi || item.halaman || item.pengajar || item.link);
 
-            rows = rows.filter(item =>
-                item.hari_tanggal ||
-                item.materi ||
-                item.halaman ||
-                item.pengajar ||
-                item.link
-            );
-
-            renderPengajian(rows);
+            const fingerprint = JSON.stringify(rows);
+            if (fingerprint !== lastSDCDataFingerprint) {
+                lastSDCDataFingerprint = fingerprint;
+                renderPengajian(rows);
+            }
 
         } catch (error) {
-            console.error(
-                "Gagal memuat arsip pengajian SDC:",
-                error
-            );
-
+            console.error("Gagal memuat arsip pengajian SDC:", error);
             container.innerHTML = `
                 <div class="loading-box">
-
-                    <span
-                        class="loading-title"
-                        style="color:#ef4444;">
-                        Gagal memuat data pengajian
-                    </span>
-
-                    <span class="loading-subtext">
-                        Periksa koneksi internet dan pengaturan
-                        Google Sheets, lalu coba muat ulang halaman.
-                    </span>
-
+                    <span class="loading-title" style="color:#ef4444;">Gagal memuat data pengajian</span>
+                    <span class="loading-subtext">Periksa koneksi internet dan pengaturan Google Sheets, lalu coba muat ulang halaman.</span>
                 </div>
             `;
         }
@@ -998,11 +1156,6 @@
     // ==========================================
 
     fetchAudioFromSheets();
-
-    // Periksa pembaruan setiap 60 detik.
-    // Video baru akan muncul otomatis setelah
-    // link YouTube tersedia di Google Sheets.
-
     setInterval(fetchAudioFromSheets, 60000);
 
 
@@ -1011,42 +1164,29 @@
     // ==========================================
 
     function toggleMenu() {
-        document
-            .getElementById("dropdownMenu")
-            .classList.toggle("show");
+        document.getElementById("dropdownMenu").classList.toggle("show");
     }
 
-
     function switchSection(sectionId) {
-        document
-            .querySelectorAll(".section-content")
-            .forEach(element => {
-                element.classList.remove("active");
-            });
+        document.querySelectorAll(".section-content").forEach(element => {
+            element.classList.remove("active");
+        });
 
         const section = document.getElementById(sectionId);
-
         if (section) {
             section.classList.add("active");
         }
 
         const dropdown = document.getElementById("dropdownMenu");
-
         if (dropdown) {
             dropdown.classList.remove("show");
         }
     }
 
-
     window.onclick = function(event) {
         const dropdown = document.getElementById("dropdownMenu");
-
         if (!dropdown) return;
-
-        if (
-            !event.target.closest(".menu-button") &&
-            !event.target.closest("#dropdownMenu")
-        ) {
+        if (!event.target.closest(".menu-button") && !event.target.closest("#dropdownMenu")) {
             dropdown.classList.remove("show");
         }
     };
