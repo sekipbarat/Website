@@ -956,7 +956,6 @@
             return;
         }
 
-        // Cari item yang merupakan hari ini
         const todayIndex = rows.findIndex(item => isToday(item.hari_tanggal));
 
         if (todayIndex !== -1) {
@@ -965,7 +964,7 @@
             container.innerHTML = `
                 <div class="loading-box">
                     <span class="loading-title">Belum Ada Pengajian Hari Ini</span>
-                    <span class="loading-subtext">Silakan klik tanggal beranda hijau pada kalender di bawah untuk memutar arsip pengajian tanggal lain.</span>
+                    <span class="loading-subtext">Silakan klik tanggal berwarna hijau pada kalender di bawah untuk memutar arsip pengajian tanggal lain.</span>
                 </div>
             `;
         }
@@ -1043,10 +1042,7 @@
         const item = globalPengajianRows[origIndex];
 
         if (container && item) {
-            // Render card pengajian tanggal yang diklik dari kalender
             container.innerHTML = buildCardHTML(item, origIndex);
-            
-            // Inisialisasi player YouTube-nya
             setTimeout(initSDCYouTubePlayers, 100);
 
             const cardElem = document.getElementById(`card-item-${origIndex}`);
@@ -1139,7 +1135,11 @@
 
     function toggleSDCPlay(pId) {
         const player = sdcYTPlayers[pId];
-        if (!player || typeof player.getPlayerState !== "function") return;
+        if (!player) {
+            // Jika player belum terinisialisasi sempurna, coba inisialisasi ulang
+            initSDCYouTubePlayers();
+            return;
+        }
 
         Object.keys(sdcYTPlayers).forEach(otherId => {
             if (otherId !== pId) {
@@ -1151,10 +1151,15 @@
             }
         });
 
-        const currentState = player.getPlayerState();
-        if (currentState === YT.PlayerState.PLAYING) {
-            player.pauseVideo();
-        } else {
+        try {
+            const currentState = player.getPlayerState();
+            if (currentState === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        } catch (e) {
+            // Fallback jika state belum siap
             player.playVideo();
         }
     }
