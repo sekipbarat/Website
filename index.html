@@ -630,131 +630,376 @@
     </footer>
 
     <script>
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxal4LPHrUp81FAfr-fkvkI2ljQhhKXvnOQGs7rgN4T2h9ZgCjXnX-f_NSblkhDaBB3/exec";
+    // ==========================================
+    // KONFIGURASI GOOGLE SHEETS
+    // ==========================================
 
-        function formatTanggal(str) {
-            if (!str) return '';
-            const val = str.toString().trim();
-            if (val.includes('T') && val.includes('Z')) {
-                const d = new Date(val);
-                if (!isNaN(d.getTime())) {
-                    return d.toLocaleDateString('id-ID', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short'
-                    });
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxR1yYh8Jvr2xmTpjo9hgXSgmqKtLms0cPHiH0ax3AyXwlh_QjR64bh3WFz7ZrGYkVCfQ/exec";
+
+
+    // ==========================================
+    // FUNGSI KEAMANAN TEKS HTML
+    // ==========================================
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+
+    // ==========================================
+    // MENGAMBIL ID VIDEO YOUTUBE
+    // Mendukung:
+    // youtube.com/watch?v=...
+    // youtu.be/...
+    // youtube.com/shorts/...
+    // youtube.com/live/...
+    // youtube.com/embed/...
+    // ==========================================
+
+    function youtubeId(url) {
+        const value = String(url || "").trim();
+
+        if (!value) return "";
+
+        try {
+            const parsed = new URL(value);
+            const hostname = parsed.hostname.toLowerCase();
+
+            if (
+                hostname === "youtu.be" ||
+                hostname === "www.youtu.be"
+            ) {
+                return parsed.pathname.split("/").filter(Boolean)[0] || "";
+            }
+
+            if (
+                hostname === "youtube.com" ||
+                hostname === "www.youtube.com" ||
+                hostname === "m.youtube.com" ||
+                hostname === "music.youtube.com" ||
+                hostname === "youtube-nocookie.com" ||
+                hostname === "www.youtube-nocookie.com"
+            ) {
+                if (parsed.pathname === "/watch") {
+                    return parsed.searchParams.get("v") || "";
+                }
+
+                const parts = parsed.pathname.split("/").filter(Boolean);
+
+                if (["embed", "shorts", "live"].includes(parts[0])) {
+                    return parts[1] || "";
                 }
             }
-            return val;
+        } catch (error) {
+            console.warn("Link YouTube tidak valid:", error);
         }
 
-        function formatHalaman(str) {
-            if (!str) return '';
-            const val = str.toString().trim();
-            if (val.includes('T') && val.includes('Z')) {
-                const d = new Date(val);
-                if (!isNaN(d.getTime())) {
-                    return `${d.getDate()}–${d.getMonth() + 1}`;
-                }
+        return "";
+    }
+
+
+    // ==========================================
+    // MENAMPILKAN DAFTAR PENGAJIAN
+    // ==========================================
+
+    function renderPengajian(rows) {
+        const container = document.getElementById("audioContainer");
+
+        if (!container) return;
+
+        if (!rows.length) {
+            container.innerHTML = `
+                <div class="loading-box">
+                    <span class="loading-title">
+                        Belum ada arsip pengajian
+                    </span>
+
+                    <span class="loading-subtext">
+                        Data akan muncul setelah tersedia di Google Sheets.
+                    </span>
+                </div>
+            `;
+
+            return;
+        }
+
+        // Data terbaru ditampilkan paling atas.
+        const dataTerbaru = [...rows].reverse();
+
+        container.innerHTML = dataTerbaru.map(item => {
+            const tanggal = escapeHTML(item.hari_tanggal || "");
+            const materi = escapeHTML(item.materi || "");
+            const halaman = escapeHTML(item.halaman || "");
+            const pengajar = escapeHTML(item.pengajar || "");
+
+            const link = item.link || "";
+            const idVideo = youtubeId(link);
+
+            let player;
+
+            if (idVideo) {
+                player = `
+                    <div class="youtube-player-wrap">
+                        <iframe
+                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}"
+                            title="Pemutar pengajian SDC Subuh"
+                            loading="lazy"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+
+                    <a
+                        class="youtube-open-link"
+                        href="https://www.youtube.com/watch?v=${encodeURIComponent(idVideo)}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Buka di YouTube ↗
+                    </a>
+                `;
+            } else {
+                player = `
+                    <div class="youtube-pending">
+                        Video belum tersedia
+                    </div>
+                `;
             }
-            return val;
-        }
 
-        async function fetchAudioFromSheets() {
-            const container = document.getElementById('audioContainer');
-            const announceBox = document.getElementById('announcementBox');
-            const announceText = document.getElementById('announcementText');
+            return `
+                <article class="audio-card">
 
-            try {
-                const response = await fetch(GOOGLE_SHEET_URL);
-                const data = await response.json();
-                
-                let textPengumuman = "";
-                if (Array.isArray(data)) {
-                    const itemWithAnnounce = data.find(item => item.pengumuman && item.pengumuman.toString().trim() !== "");
-                    if (itemWithAnnounce) {
-                        textPengumuman = itemWithAnnounce.pengumuman;
-                    }
-                } else if (data.pengumuman) {
-                    textPengumuman = data.pengumuman;
-                }
+                    <span class="date-info">
+                        ${tanggal}
+                    </span>
 
-                if (textPengumuman && textPengumuman.toString().trim() !== "") {
-                    announceText.innerText = textPengumuman.toString();
-                    announceBox.classList.add('active');
-                } else {
-                    announceBox.classList.remove('active');
-                }
+                    <div class="card-top">
 
-                const listData = Array.isArray(data) ? data : (data.audios || []);
-                let htmlContent = '';
+                        <div class="row-1">
 
-                listData.forEach(item => {
-                    const tanggalTampil = formatTanggal(item.tanggal);
-                    const halamanTampil = formatHalaman(item.halaman);
-                    
-                    const audioUrl = item.file_audio ? item.file_audio.toString().trim() : (item.fileAudio ? item.fileAudio.toString().trim() : (item.fileaudio ? item.fileaudio.toString().trim() : ""));
+                            ${pengajar
+                                ? `<span class="teacher-name">${pengajar}</span>`
+                                : ""
+                            }
 
-                    htmlContent += `
-                        <div class="audio-card">
-                            <span class="date-info">${tanggalTampil}</span>
-                            
-                            <div class="card-top">
-                                <div class="row-1">
-                                    ${item.penceramah ? `<span class="teacher-name">${item.penceramah}</span>` : ''}
-                                    <span class="kitab-name">${item.kitab || ''}</span>
-                                </div>
-                                <div class="row-2">
-                                    <span class="page-info">${halamanTampil}</span>
-                                </div>
-                            </div>
-                            <audio controls class="native-audio-player" src="${audioUrl}">
-                                Browser Anda tidak mendukung pemutar audio.
-                            </audio>
+                            <span class="kitab-name">
+                                ${materi}
+                            </span>
+
                         </div>
-                    `;
 
-                    if (item.pisah && (item.pisah.toString().toLowerCase() === 'true' || item.pisah.toString().toLowerCase() === 'ya')) {
-                        htmlContent += `
-                            <div class="audio-notice-box">
-                                <p class="notice-desc">Mohon maaf jika mengalami kendala audio putus-putus, karena biasanya koneksi SDC kurang stabil.</p>
-                            </div>
-                            <div class="previous-title-container">
-                                <h4>Pengajian Sebelumnya</h4>
-                                <div class="title-line"></div>
-                            </div>
-                        `;
-                    }
-                });
+                        ${halaman
+                            ? `
+                                <div class="row-2">
+                                    <span class="page-info">
+                                        Halaman ${halaman}
+                                    </span>
+                                </div>
+                            `
+                            : ""
+                        }
 
-                container.innerHTML = htmlContent;
-            } catch (error) {
-                container.innerHTML = '<div class="loading-box"><span class="loading-title" style="color:#ef4444;">Gagal memuat data audio.</span><span class="loading-subtext">Silakan coba refresh halaman Anda.</span></div>';
-            }
-        }
+                    </div>
 
-        fetchAudioFromSheets();
+                    ${player}
 
-        function toggleMenu() {
-            document.getElementById('dropdownMenu').classList.toggle('show');
-        }
+                </article>
+            `;
+        }).join("");
+    }
 
-        function switchSection(sectionId) {
-            document.querySelectorAll('.section-content').forEach(el => {
-                el.classList.remove('active');
+
+    // ==========================================
+    // MENGAMBIL DATA DARI GOOGLE SHEETS
+    //
+    // Kolom Sheet1:
+    // A = hari&tanggal
+    // B = materi
+    // C = halaman
+    // D = pengajar
+    // E = link
+    // ==========================================
+
+    async function fetchAudioFromSheets() {
+        const container = document.getElementById("audioContainer");
+
+        if (!container) return;
+
+        try {
+            const response = await fetch(GOOGLE_SHEET_URL, {
+                method: "GET",
+                cache: "no-store"
             });
-            document.getElementById(sectionId).classList.add('active');
-            document.getElementById('dropdownMenu').classList.remove('show');
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+
+            const data = await response.json();
+
+            // Mendukung respons berbentuk array langsung
+            // maupun objek yang memiliki rows, audios, atau data.
+
+            let rows = Array.isArray(data)
+                ? data
+                : (data.rows || data.audios || data.data || []);
+
+            // Mendukung data berbentuk array dua dimensi.
+
+            if (rows.length && Array.isArray(rows[0])) {
+                const headers = rows.shift().map(value =>
+                    String(value).trim().toLowerCase()
+                );
+
+                rows = rows.map(row =>
+                    Object.fromEntries(
+                        headers.map((header, index) => [
+                            header,
+                            row[index] ?? ""
+                        ])
+                    )
+                );
+            }
+
+            // Samakan nama kolom dari Google Sheets
+            // agar dapat dibaca oleh website.
+
+            rows = rows.map(item => ({
+                hari_tanggal:
+                    item["hari&tanggal"] ||
+                    item.hari_tanggal ||
+                    item.hari ||
+                    item.tanggal ||
+                    "",
+
+                materi:
+                    item.materi ||
+                    item.hadist ||
+                    item.Hadist ||
+                    "",
+
+                halaman:
+                    item.halaman ||
+                    "",
+
+                pengajar:
+                    item.pengajar ||
+                    "",
+
+                // Penting: kolom E di Sheet1 bernama "link".
+                // Link YouTube akan otomatis dibaca dari sini.
+
+                link:
+                    item.link ||
+                    item.link_youtube ||
+                    item["link youtube"] ||
+                    item.linkYouTube ||
+                    item.youtube ||
+                    ""
+            }));
+
+            // Abaikan baris yang seluruh datanya kosong.
+
+            rows = rows.filter(item =>
+                item.hari_tanggal ||
+                item.materi ||
+                item.halaman ||
+                item.pengajar ||
+                item.link
+            );
+
+            renderPengajian(rows);
+
+        } catch (error) {
+            console.error(
+                "Gagal memuat arsip pengajian SDC:",
+                error
+            );
+
+            container.innerHTML = `
+                <div class="loading-box">
+
+                    <span
+                        class="loading-title"
+                        style="color:#ef4444;">
+                        Gagal memuat data pengajian
+                    </span>
+
+                    <span class="loading-subtext">
+                        Periksa koneksi internet dan pengaturan
+                        Google Sheets, lalu coba muat ulang halaman.
+                    </span>
+
+                </div>
+            `;
+        }
+    }
+
+
+    // ==========================================
+    // MEMUAT DATA OTOMATIS
+    // ==========================================
+
+    fetchAudioFromSheets();
+
+    // Periksa pembaruan setiap 60 detik.
+    // Video baru akan muncul otomatis setelah
+    // link YouTube tersedia di Google Sheets.
+
+    setInterval(fetchAudioFromSheets, 60000);
+
+
+    // ==========================================
+    // MENU NAVIGASI WEBSITE
+    // ==========================================
+
+    function toggleMenu() {
+        document
+            .getElementById("dropdownMenu")
+            .classList.toggle("show");
+    }
+
+
+    function switchSection(sectionId) {
+        document
+            .querySelectorAll(".section-content")
+            .forEach(element => {
+                element.classList.remove("active");
+            });
+
+        const section = document.getElementById(sectionId);
+
+        if (section) {
+            section.classList.add("active");
         }
 
-        window.onclick = function(event) {
-            if (!event.target.matches('.menu-icon-btn') && !event.target.closest('.menu-icon-btn')) {
-                const menu = document.getElementById('dropdownMenu');
-                if (menu && menu.classList.contains('show')) {
-                    menu.classList.remove('show');
-                }
-            }
+        const dropdown = document.getElementById("dropdownMenu");
+
+        if (dropdown) {
+            dropdown.classList.remove("show");
         }
-    </script>
+    }
+
+
+    window.onclick = function(event) {
+        const dropdown = document.getElementById("dropdownMenu");
+
+        if (!dropdown) return;
+
+        if (
+            !event.target.closest(".menu-button") &&
+            !event.target.closest("#dropdownMenu")
+        ) {
+            dropdown.classList.remove("show");
+        }
+    };
+
+</script>
 </body>
 </html>
