@@ -454,12 +454,12 @@
         .calendar-note {
             width: 100%;
             max-width: 680px;
-            font-size: 0.72rem;
-            color: var(--text-muted);
+            font-size: 0.7rem;
+            color: #52525b;
             text-align: center;
             line-height: 1.4;
-            margin-bottom: 6px;
-            padding: 0 4px;
+            margin-bottom: 8px;
+            padding: 0 6px;
         }
 
         /* --- STYLING WIDGET KALENDER DI BAWAH --- */
@@ -717,8 +717,8 @@
 
     <!-- KETERANGAN DI ATAS KALENDER -->
     <div class="calendar-note">
-        Saat berpindah ke tanggal tertentu dan audio tidak bisa diputar, silahkan refresh halaman dan ulangi lagi.<br>
-        Hari Minggu SDC bakda subuh libur.
+        saat berpindah ke tanggal tertentu dan audio tidak bisa diputar, silahkan refresh halaman dan ulangi lagi.<br>
+        hari minggu sdc bakda subuh libur.
     </div>
 
     <!-- WIDGET KALENDER INTERAKTIF DI BAWAH -->
@@ -729,13 +729,13 @@
             <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
         </div>
         <div class="cal-grid">
-            <div class="cal-day-name">Min</div>
-            <div class="cal-day-name">Sen</div>
-            <div class="cal-day-name">Sel</div>
-            <div class="cal-day-name">Rab</div>
-            <div class="cal-day-name">Kam</div>
-            <div class="cal-day-name">Jum</div>
-            <div class="cal-day-name">Sab</div>
+            <div class="cal-day-name">min</div>
+            <div class="cal-day-name">sen</div>
+            <div class="cal-day-name">sel</div>
+            <div class="cal-day-name">rab</div>
+            <div class="cal-day-name">kam</div>
+            <div class="cal-day-name">jum</div>
+            <div class="cal-day-name">sab</div>
         </div>
         <div class="cal-grid" id="calDaysGrid" style="margin-top: 4px;"></div>
     </div>
@@ -897,7 +897,7 @@
                         </div>
                     </div>
                     <div class="audio-sub-controls">
-                        <label class="speed-label" for="speed-${playerId}">Kecepatan</label>
+                        <label class="speed-label" for="speed-${playerId}">kecepatan</label>
                         <select class="speed-select" id="speed-${playerId}" aria-label="Kecepatan pemutaran" onchange="setSDCPlaybackRate('${playerId}', this.value)">
                             <option value="0.5">0,5×</option>
                             <option value="0.75">0,75×</option>
@@ -913,7 +913,7 @@
         } else {
             playerContent = `
                 <div class="youtube-pending">
-                    Audio belum tersedia
+                    audio belum tersedia
                 </div>
             `;
         }
@@ -926,7 +926,7 @@
                         ${pengajar ? `<span class="teacher-name">${pengajar}</span>` : ""}
                         <span class="kitab-name">${materi}</span>
                     </div>
-                    ${halaman ? `<div class="row-2"><span class="page-info">Halaman ${halaman}</span></div>` : ""}
+                    ${halaman ? `<div class="row-2"><span class="page-info">${halaman}</span></div>` : ""}
                 </div>
                 ${playerContent}
             </article>
@@ -945,8 +945,8 @@
         if (!rows.length) {
             container.innerHTML = `
                 <div class="loading-box">
-                    <span class="loading-title">Belum ada arsip pengajian</span>
-                    <span class="loading-subtext">Data akan muncul setelah tersedia di Google Sheets.</span>
+                    <span class="loading-title">belum ada arsip pengajian</span>
+                    <span class="loading-subtext">data akan muncul setelah tersedia di google sheets.</span>
                 </div>
             `;
             return;
@@ -959,8 +959,8 @@
         } else {
             container.innerHTML = `
                 <div class="loading-box">
-                    <span class="loading-title">Belum Ada Pengajian Hari Ini</span>
-                    <span class="loading-subtext">Silakan klik tanggal berwarna hijau pada kalender di bawah untuk memutar arsip pengajian tanggal lain.</span>
+                    <span class="loading-title">belum ada pengajian hari ini</span>
+                    <span class="loading-subtext">silakan klik tanggal berwarna hijau pada kalender di bawah untuk memutar arsip pengajian tanggal lain.</span>
                 </div>
             `;
         }
@@ -974,8 +974,8 @@
     // ==========================================
 
     const monthsIndo = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        "januari", "februari", "maret", "april", "mei", "juni",
+        "juli", "agustus", "september", "oktober", "november", "desember"
     ];
 
     function changeMonth(direction) {
@@ -1263,8 +1263,8 @@
             console.error("Gagal memuat arsip pengajian SDC:", error);
             container.innerHTML = `
                 <div class="loading-box">
-                    <span class="loading-title" style="color:#ef4444;">Gagal memuat data pengajian</span>
-                    <span class="loading-subtext">Periksa koneksi internet dan pengaturan Google Sheets, lalu coba muat ulang halaman.</span>
+                    <span class="loading-title" style="color:#ef4444;">gagal memuat data pengajian</span>
+                    <span class="loading-subtext">periksa koneksi internet dan pengaturan google sheets, lalu coba muat ulang halaman.</span>
                 </div>
             `;
         }
