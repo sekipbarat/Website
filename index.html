@@ -511,6 +511,29 @@
             background: #16a34a;
         }
 
+        /* Tombol buka audio arsip masa lalu */
+        .open-audio-btn {
+            width: 100%;
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-title);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .open-audio-btn:hover {
+            background: var(--border-color);
+        }
+
         /* --- STYLING WIDGET KALENDER DI BAWAH --- */
         .calendar-wrapper {
             width: 100%;
@@ -870,6 +893,40 @@
 
 
     // ==========================================
+    // MEMBANDINGKAN TANGGAL HARI INI
+    // ==========================================
+    function parseDateString(str) {
+        if (!str) return null;
+        const lower = str.toLowerCase();
+        for (let m = 0; m < monthsIndo.length; m++) {
+            if (lower.includes(monthsIndo[m].toLowerCase())) {
+                const parts = str.replace(/[^0-9]/g, " ").trim().split(/\s+/);
+                if (parts.length > 0) {
+                    const dayNum = parseInt(parts[0], 10);
+                    let yearNum = new Date().getFullYear();
+                    for (let p of parts) {
+                        if (p.length === 4 && !isNaN(p)) yearNum = parseInt(p, 10);
+                    }
+                    if (!isNaN(dayNum)) {
+                        return new Date(yearNum, m, dayNum);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function isToday(dateStr) {
+        const parsed = parseDateString(dateStr);
+        if (!parsed) return false;
+        const today = new Date();
+        return parsed.getDate() === today.getDate() &&
+               parsed.getMonth() === today.getMonth() &&
+               parsed.getFullYear() === today.getFullYear();
+    }
+
+
+    // ==========================================
     // MENAMPILKAN DAFTAR PENGAJIAN
     // ==========================================
 
@@ -898,11 +955,13 @@
             const link = item.link || "";
             const idVideo = youtubeId(link);
 
-            let player;
+            // Cek apakah data ini adalah jadwal hari ini
+            const isCurrentDay = isToday(item.hari_tanggal);
 
+            let playerContent = "";
             if (idVideo) {
                 const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
-                player = `
+                playerContent = `
                     <div class="hidden-yt-container">
                         <iframe
                             id="${playerId}"
@@ -948,14 +1007,23 @@
                     </div>
                 `;
             } else {
-                player = `
+                playerContent = `
                     <div class="youtube-pending">
                         Audio belum tersedia
                     </div>
                 `;
             }
 
-            // ID unik berdasarkan index untuk memudahkan navigasi klik tanggal kalender
+            // Jika bukan hari ini, sembunyikan player dan tampilkan tombol untuk membuka
+            const bodyContent = isCurrentDay ? playerContent : `
+                <div id="hidden-audio-wrap-${index}" style="display: none;">
+                    ${playerContent}
+                </div>
+                <button class="open-audio-btn" id="open-btn-${index}" onclick="revealAudio(${index})">
+                    ▶ Putar Pengajian Tanggal Ini
+                </button>
+            `;
+
             return `
                 <article class="audio-card" id="card-item-${index}">
                     <span class="date-info">${tanggal}</span>
@@ -966,12 +1034,22 @@
                         </div>
                         ${halaman ? `<div class="row-2"><span class="page-info">Halaman ${halaman}</span></div>` : ""}
                     </div>
-                    ${player}
+                    ${bodyContent}
                 </article>
             `;
         }).join("");
 
         initSDCYouTubePlayers();
+    }
+
+    function revealAudio(index) {
+        const wrap = document.getElementById(`hidden-audio-wrap-${index}`);
+        const btn = document.getElementById(`open-btn-${index}`);
+        if (wrap) wrap.style.display = "block";
+        if (btn) btn.style.display = "none";
+        
+        // Inisialisasi ulang player YouTube agar langsung siap putar
+        setTimeout(initSDCYouTubePlayers, 100);
     }
 
 
@@ -989,29 +1067,6 @@
         renderCalendar();
     }
 
-    function parseDateString(str) {
-        if (!str) return null;
-        // Mencari pola angka yang mirip tanggal di string hari_tanggal (contoh: "Senin, 12 Oktober 2026")
-        const lower = str.toLowerCase();
-        for (let m = 0; m < monthsIndo.length; m++) {
-            if (lower.includes(monthsIndo[m].toLowerCase())) {
-                const parts = str.replace(/[^0-9]/g, " ").trim().split(/\s+/);
-                if (parts.length > 0) {
-                    const dayNum = parseInt(parts[0], 10);
-                    // Cek tahun jika ada
-                    let yearNum = currentCalDate.getFullYear();
-                    for (let p of parts) {
-                        if (p.length === 4 && !isNaN(p)) yearNum = parseInt(p, 10);
-                    }
-                    if (!isNaN(dayNum)) {
-                        return new Date(yearNum, m, dayNum);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     function renderCalendar() {
         const titleElem = document.getElementById("calMonthTitle");
         const daysGrid = document.getElementById("calDaysGrid");
@@ -1025,23 +1080,20 @@
         const firstDayIndex = new Date(year, month, 1).getDay();
         const totalDays = new Date(year, month + 1, 0).getDate();
 
-        // Petakan tanggal mana saja di bulan ini yang memiliki pengajian
         const eventDatesMap = {};
         globalPengajianRows.forEach((item, index) => {
             const parsed = parseDateString(item.hari_tanggal);
             if (parsed && parsed.getFullYear() === year && parsed.getMonth() === month) {
                 const dNum = parsed.getDate();
-                eventDatesMap[dNum] = index; // simpan index data asli
+                eventDatesMap[dNum] = index;
             }
         });
 
         let html = "";
-        // Kotak kosong untuk hari sebelum tanggal 1
         for (let i = 0; i < firstDayIndex; i++) {
             html += `<div class="cal-date-cell empty"></div>`;
         }
 
-        // Render tanggal dalam bulan
         for (let d = 1; d <= totalDays; d++) {
             const hasEvent = eventDatesMap.hasOwnProperty(d);
             if (hasEvent) {
@@ -1066,8 +1118,11 @@
 
     function jumpToAudio(origIndex) {
         switchSection('sdc');
-        // Karena data di-reverse saat dirender, sesuaikan index target
         const reversedIndex = globalPengajianRows.length - 1 - origIndex;
+        
+        // Jika tanggal yang diklik bukan hari ini, otomatis buka pemutarnya
+        revealAudio(reversedIndex);
+
         const cardElem = document.getElementById(`card-item-${reversedIndex}`);
         if (cardElem) {
             cardElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
