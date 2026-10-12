@@ -221,49 +221,6 @@
             margin: 0 auto;
         }
 
-        /* Box Pengumuman Soft Minimalis */
-        .announcement-box {
-            display: none;
-            background: #fefce8;
-            border: 1px solid #fef08a;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 18px;
-            overflow: hidden;
-        }
-
-        .announcement-box.active {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .announcement-header {
-            font-size: 0.85rem;
-            flex-shrink: 0;
-        }
-
-        .announcement-marquee-wrapper {
-            flex: 1;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .announcement-text {
-            display: inline-block;
-            white-space: nowrap;
-            font-size: 0.8rem;
-            color: #854d0e;
-            font-weight: 600;
-            padding-left: 100%;
-            animation: marqueeAnnounce 22s linear infinite;
-        }
-
-        @keyframes marqueeAnnounce {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-
         /* Player Box */
         .audio-list {
             display: flex;
@@ -511,29 +468,6 @@
             background: #16a34a;
         }
 
-        /* Tombol buka audio arsip masa lalu */
-        .open-audio-btn {
-            width: 100%;
-            background: var(--badge-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-family: inherit;
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: var(--text-title);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-        .open-audio-btn:hover {
-            background: var(--border-color);
-        }
-
         /* --- STYLING WIDGET KALENDER DI BAWAH --- */
         .calendar-wrapper {
             width: 100%;
@@ -740,13 +674,6 @@
                 <h3>Arsip Pengajian SDC Sesi Subuh</h3>
                 <p>Tidak ada kata terlambat dalam mencari ilmu, niati karena Allah semoga Allah paring manfaat dan barokah.</p>
             </div>
-            
-            <div id="announcementBox" class="announcement-box">
-                <div class="announcement-header">📢</div>
-                <div class="announcement-marquee-wrapper">
-                    <div class="announcement-text" id="announcementText"></div>
-                </div>
-            </div>
 
             <div class="audio-list" id="audioContainer">
                 <div class="loading-box">
@@ -927,7 +854,92 @@
 
 
     // ==========================================
-    // MENAMPILKAN DAFTAR PENGAJIAN
+    // RENDER PEMUTAR AUDIO BERDASARKAN DATA ITEM
+    // ==========================================
+
+    function buildCardHTML(item, index) {
+        const tanggal = escapeHTML(item.hari_tanggal || "");
+        const materi = escapeHTML(item.materi || "");
+        const halaman = escapeHTML(item.halaman || "");
+        const pengajar = escapeHTML(item.pengajar || "");
+
+        const link = item.link || "";
+        const idVideo = youtubeId(link);
+
+        let playerContent = "";
+        if (idVideo) {
+            const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+            playerContent = `
+                <div class="hidden-yt-container">
+                    <iframe
+                        id="${playerId}"
+                        src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?enablejsapi=1&playsinline=1&controls=0&disablekb=1&modestbranding=1&rel=0&origin=${encodeURIComponent(location.origin)}"
+                        title="Pemutar audio pengajian"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
+                    </iframe>
+                </div>
+
+                <div class="custom-audio-player" id="player-box-${playerId}">
+                    <div class="player-main-controls">
+                        <button class="play-pause-btn" id="btn-play-${playerId}" onclick="toggleSDCPlay('${playerId}')" aria-label="Putar / Jeda">
+                            <svg id="icon-play-${playerId}" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <div class="progress-container">
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-bar-fill" id="progress-fill-${playerId}"></div>
+                                <input type="range" class="progress-slider" id="slider-${playerId}" min="0" max="100" value="0" step="0.1" oninput="seekSDCAudio('${playerId}', this.value)">
+                            </div>
+                            <div class="time-info">
+                                <span id="current-time-${playerId}">0:00</span>
+                                <span id="duration-${playerId}">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="audio-sub-controls">
+                        <label class="speed-label" for="speed-${playerId}">Kecepatan</label>
+                        <select class="speed-select" id="speed-${playerId}" aria-label="Kecepatan pemutaran" onchange="setSDCPlaybackRate('${playerId}', this.value)">
+                            <option value="0.5">0,5×</option>
+                            <option value="0.75">0,75×</option>
+                            <option value="1" selected>1×</option>
+                            <option value="1.25">1,25×</option>
+                            <option value="1.5">1,5×</option>
+                            <option value="1.75">1,75×</option>
+                            <option value="2">2×</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="player-caption">
+                    <span class="player-dot"></span>
+                    Audio Player Minimalis (Aman dari tombol unduhan).
+                </div>
+            `;
+        } else {
+            playerContent = `
+                <div class="youtube-pending">
+                    Audio belum tersedia
+                </div>
+            `;
+        }
+
+        return `
+            <article class="audio-card" id="card-item-${index}">
+                <span class="date-info">${tanggal}</span>
+                <div class="card-top">
+                    <div class="row-1">
+                        ${pengajar ? `<span class="teacher-name">${pengajar}</span>` : ""}
+                        <span class="kitab-name">${materi}</span>
+                    </div>
+                    ${halaman ? `<div class="row-2"><span class="page-info">Halaman ${halaman}</span></div>` : ""}
+                </div>
+                ${playerContent}
+            </article>
+        `;
+    }
+
+
+    // ==========================================
+    // MENAMPILKAN DAFTAR PENGAJIAN (HANYA HARI INI SECARA DEFAULT)
     // ==========================================
 
     function renderPengajian(rows) {
@@ -944,112 +956,21 @@
             return;
         }
 
-        const dataTerbaru = [...rows].reverse();
+        // Cari item yang merupakan hari ini
+        const todayIndex = rows.findIndex(item => isToday(item.hari_tanggal));
 
-        container.innerHTML = dataTerbaru.map((item, index) => {
-            const tanggal = escapeHTML(item.hari_tanggal || "");
-            const materi = escapeHTML(item.materi || "");
-            const halaman = escapeHTML(item.halaman || "");
-            const pengajar = escapeHTML(item.pengajar || "");
-
-            const link = item.link || "";
-            const idVideo = youtubeId(link);
-
-            // Cek apakah data ini adalah jadwal hari ini
-            const isCurrentDay = isToday(item.hari_tanggal);
-
-            let playerContent = "";
-            if (idVideo) {
-                const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
-                playerContent = `
-                    <div class="hidden-yt-container">
-                        <iframe
-                            id="${playerId}"
-                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?enablejsapi=1&playsinline=1&controls=0&disablekb=1&modestbranding=1&rel=0&origin=${encodeURIComponent(location.origin)}"
-                            title="Pemutar audio pengajian"
-                            loading="lazy"
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture">
-                        </iframe>
-                    </div>
-
-                    <div class="custom-audio-player" id="player-box-${playerId}">
-                        <div class="player-main-controls">
-                            <button class="play-pause-btn" id="btn-play-${playerId}" onclick="toggleSDCPlay('${playerId}')" aria-label="Putar / Jeda">
-                                <svg id="icon-play-${playerId}" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            </button>
-                            <div class="progress-container">
-                                <div class="progress-bar-wrapper">
-                                    <div class="progress-bar-fill" id="progress-fill-${playerId}"></div>
-                                    <input type="range" class="progress-slider" id="slider-${playerId}" min="0" max="100" value="0" step="0.1" oninput="seekSDCAudio('${playerId}', this.value)">
-                                </div>
-                                <div class="time-info">
-                                    <span id="current-time-${playerId}">0:00</span>
-                                    <span id="duration-${playerId}">0:00</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="audio-sub-controls">
-                            <label class="speed-label" for="speed-${playerId}">Kecepatan</label>
-                            <select class="speed-select" id="speed-${playerId}" aria-label="Kecepatan pemutaran" onchange="setSDCPlaybackRate('${playerId}', this.value)">
-                                <option value="0.5">0,5×</option>
-                                <option value="0.75">0,75×</option>
-                                <option value="1" selected>1×</option>
-                                <option value="1.25">1,25×</option>
-                                <option value="1.5">1,5×</option>
-                                <option value="1.75">1,75×</option>
-                                <option value="2">2×</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="player-caption">
-                        <span class="player-dot"></span>
-                        Audio Player Minimalis (Aman dari tombol unduhan).
-                    </div>
-                `;
-            } else {
-                playerContent = `
-                    <div class="youtube-pending">
-                        Audio belum tersedia
-                    </div>
-                `;
-            }
-
-            // Jika bukan hari ini, sembunyikan player dan tampilkan tombol untuk membuka
-            const bodyContent = isCurrentDay ? playerContent : `
-                <div id="hidden-audio-wrap-${index}" style="display: none;">
-                    ${playerContent}
+        if (todayIndex !== -1) {
+            container.innerHTML = buildCardHTML(rows[todayIndex], todayIndex);
+        } else {
+            container.innerHTML = `
+                <div class="loading-box">
+                    <span class="loading-title">Belum Ada Pengajian Hari Ini</span>
+                    <span class="loading-subtext">Silakan klik tanggal beranda hijau pada kalender di bawah untuk memutar arsip pengajian tanggal lain.</span>
                 </div>
-                <button class="open-audio-btn" id="open-btn-${index}" onclick="revealAudio(${index})">
-                    ▶ Putar Pengajian Tanggal Ini
-                </button>
             `;
-
-            return `
-                <article class="audio-card" id="card-item-${index}">
-                    <span class="date-info">${tanggal}</span>
-                    <div class="card-top">
-                        <div class="row-1">
-                            ${pengajar ? `<span class="teacher-name">${pengajar}</span>` : ""}
-                            <span class="kitab-name">${materi}</span>
-                        </div>
-                        ${halaman ? `<div class="row-2"><span class="page-info">Halaman ${halaman}</span></div>` : ""}
-                    </div>
-                    ${bodyContent}
-                </article>
-            `;
-        }).join("");
+        }
 
         initSDCYouTubePlayers();
-    }
-
-    function revealAudio(index) {
-        const wrap = document.getElementById(`hidden-audio-wrap-${index}`);
-        const btn = document.getElementById(`open-btn-${index}`);
-        if (wrap) wrap.style.display = "block";
-        if (btn) btn.style.display = "none";
-        
-        // Inisialisasi ulang player YouTube agar langsung siap putar
-        setTimeout(initSDCYouTubePlayers, 100);
     }
 
 
@@ -1118,18 +1039,24 @@
 
     function jumpToAudio(origIndex) {
         switchSection('sdc');
-        const reversedIndex = globalPengajianRows.length - 1 - origIndex;
-        
-        // Jika tanggal yang diklik bukan hari ini, otomatis buka pemutarnya
-        revealAudio(reversedIndex);
+        const container = document.getElementById("audioContainer");
+        const item = globalPengajianRows[origIndex];
 
-        const cardElem = document.getElementById(`card-item-${reversedIndex}`);
-        if (cardElem) {
-            cardElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            cardElem.style.borderColor = '#059669';
-            setTimeout(() => {
-                cardElem.style.borderColor = '';
-            }, 2000);
+        if (container && item) {
+            // Render card pengajian tanggal yang diklik dari kalender
+            container.innerHTML = buildCardHTML(item, origIndex);
+            
+            // Inisialisasi player YouTube-nya
+            setTimeout(initSDCYouTubePlayers, 100);
+
+            const cardElem = document.getElementById(`card-item-${origIndex}`);
+            if (cardElem) {
+                cardElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                cardElem.style.borderColor = '#059669';
+                setTimeout(() => {
+                    cardElem.style.borderColor = '';
+                }, 2000);
+            }
         }
     }
 
