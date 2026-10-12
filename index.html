@@ -187,7 +187,7 @@
             border-radius: 14px;
             padding: 20px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .section-content {
@@ -450,22 +450,16 @@
             text-align: center;
         }
 
-        .player-caption {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            color: #71717a;
-            font-size: .78rem;
-            line-height: 1.5;
-            padding: 0 2px;
-        }
-
-        .player-caption .player-dot {
-            width: 7px;
-            height: 7px;
-            flex: 0 0 7px;
-            border-radius: 50%;
-            background: #16a34a;
+        /* --- CATATAN KECIL DI ATAS KALENDER --- */
+        .calendar-note {
+            width: 100%;
+            max-width: 680px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            padding: 0 4px;
         }
 
         /* --- STYLING WIDGET KALENDER DI BAWAH --- */
@@ -721,6 +715,12 @@
         </div>
     </div>
 
+    <!-- KETERANGAN DI ATAS KALENDER -->
+    <div class="calendar-note">
+        Saat berpindah ke tanggal tertentu dan audio tidak bisa diputar, silahkan refresh halaman dan ulangi lagi.<br>
+        Hari Minggu SDC bakda subuh libur.
+    </div>
+
     <!-- WIDGET KALENDER INTERAKTIF DI BAWAH -->
     <div class="calendar-wrapper" id="calendarSection">
         <div class="cal-header">
@@ -908,10 +908,6 @@
                             <option value="2">2×</option>
                         </select>
                     </div>
-                </div>
-                <div class="player-caption">
-                    <span class="player-dot"></span>
-                    Audio Player Minimalis (Aman dari tombol unduhan).
                 </div>
             `;
         } else {
@@ -1136,7 +1132,6 @@
     function toggleSDCPlay(pId) {
         const player = sdcYTPlayers[pId];
         if (!player) {
-            // Jika player belum terinisialisasi sempurna, coba inisialisasi ulang
             initSDCYouTubePlayers();
             return;
         }
@@ -1159,7 +1154,6 @@
                 player.playVideo();
             }
         } catch (e) {
-            // Fallback jika state belum siap
             player.playVideo();
         }
     }
