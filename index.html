@@ -371,6 +371,40 @@
             display: block;
         }
 
+        /* Kontrol tambahan bergaya audio player (desain no. 5) */
+        .audio-extra-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .speed-label {
+            color: var(--text-muted);
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .speed-select {
+            appearance: auto;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-title);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            min-width: 86px;
+            cursor: pointer;
+        }
+
+        .speed-select:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+
         .youtube-pending {
             width: 100%;
             min-height: 64px;
@@ -790,7 +824,7 @@
         // Data terbaru ditampilkan paling atas.
         const dataTerbaru = [...rows].reverse();
 
-        container.innerHTML = dataTerbaru.map(item => {
+        container.innerHTML = dataTerbaru.map((item, index) => {
             const tanggal = escapeHTML(item.hari_tanggal || "");
             const materi = escapeHTML(item.materi || "");
             const halaman = escapeHTML(item.halaman || "");
@@ -802,10 +836,12 @@
             let player;
 
             if (idVideo) {
+                const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
                 player = `
                     <div class="youtube-player-wrap">
                         <iframe
-                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?playsinline=1&controls=1&rel=0"
+                            id="${playerId}"
+                            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(idVideo)}?enablejsapi=1&playsinline=1&controls=1&rel=0&origin=${encodeURIComponent(location.origin)}"
                             title="Pemutar pengajian SDC Subuh"
                             loading="lazy"
                             referrerpolicy="strict-origin-when-cross-origin"
@@ -813,9 +849,22 @@
                             allowfullscreen>
                         </iframe>
                     </div>
+                    <div class="audio-extra-controls">
+                        <label class="speed-label" for="speed-${playerId}">Kecepatan</label>
+                        <select class="speed-select" id="speed-${playerId}" aria-label="Kecepatan pemutaran"
+                            onchange="setSDCPlaybackRate('${playerId}', this.value)">
+                            <option value="0.5">0,5×</option>
+                            <option value="0.75">0,75×</option>
+                            <option value="1" selected>1× Normal</option>
+                            <option value="1.25">1,25×</option>
+                            <option value="1.5">1,5×</option>
+                            <option value="1.75">1,75×</option>
+                            <option value="2">2×</option>
+                        </select>
+                    </div>
                     <div class="player-caption">
                         <span class="player-dot"></span>
-                        Tekan Play untuk mendengarkan pengajian langsung di halaman ini.
+                        Tekan Play untuk memutar. Kecepatan bergantung pada dukungan YouTube untuk video ini.
                     </div>
                 `;
             } else {
@@ -866,7 +915,80 @@
                 </article>
             `;
         }).join("");
+
+        // Inisialisasi kontrol resmi YouTube IFrame API untuk pilihan kecepatan.
+        initSDCYouTubePlayers();
     }
+
+
+    // ==========================================
+    // KONTROL KECEPATAN YOUTUBE
+    // ==========================================
+
+    const sdcYTPlayers = {};
+    let sdcYTApiReady = false;
+    let sdcYTApiLoading = false;
+
+    function loadSDCYouTubeAPI() {
+        if (window.YT && window.YT.Player) {
+            sdcYTApiReady = true;
+            initSDCYouTubePlayers();
+            return;
+        }
+        if (sdcYTApiLoading) return;
+        sdcYTApiLoading = true;
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+        const previousCallback = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+            if (typeof previousCallback === "function") previousCallback();
+            sdcYTApiReady = true;
+            initSDCYouTubePlayers();
+        };
+    }
+
+    function initSDCYouTubePlayers() {
+        if (!(window.YT && window.YT.Player)) return;
+        sdcYTApiReady = true;
+        document.querySelectorAll(".youtube-player-wrap iframe[id^='sdc-yt-']").forEach(frame => {
+            if (sdcYTPlayers[frame.id]) return;
+            try {
+                sdcYTPlayers[frame.id] = new YT.Player(frame, {
+                    events: {
+                        onReady: function (event) {
+                            const select = document.getElementById("speed-" + frame.id);
+                            if (!select) return;
+                            const rates = event.target.getAvailablePlaybackRates();
+                            Array.from(select.options).forEach(option => {
+                                option.disabled = !rates.includes(Number(option.value));
+                            });
+                            // Pilih 1x sebagai nilai awal yang aman.
+                            select.value = "1";
+                        },
+                        onError: function () {
+                            const select = document.getElementById("speed-" + frame.id);
+                            if (select) select.title = "Kontrol kecepatan tidak tersedia untuk video ini.";
+                        }
+                    }
+                });
+            } catch (error) {
+                console.warn("Kontrol kecepatan YouTube belum siap:", error);
+            }
+        });
+    }
+
+    function setSDCPlaybackRate(playerId, rate) {
+        const player = sdcYTPlayers[playerId];
+        if (!player || typeof player.setPlaybackRate !== "function") return;
+        try {
+            player.setPlaybackRate(Number(rate));
+        } catch (error) {
+            console.warn("Kecepatan pemutaran tidak dapat diubah:", error);
+        }
+    }
+
+    loadSDCYouTubeAPI();
 
 
     // ==========================================
@@ -879,6 +1001,8 @@
     // D = pengajar
     // E = link
     // ==========================================
+
+    let lastSDCDataFingerprint = "";
 
     async function fetchAudioFromSheets() {
         const container = document.getElementById("audioContainer");
@@ -968,7 +1092,11 @@
                 item.link
             );
 
-            renderPengajian(rows);
+            const fingerprint = JSON.stringify(rows);
+            if (fingerprint !== lastSDCDataFingerprint) {
+                lastSDCDataFingerprint = fingerprint;
+                renderPengajian(rows);
+            }
 
         } catch (error) {
             console.error(
