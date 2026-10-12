@@ -187,6 +187,7 @@
             border-radius: 14px;
             padding: 20px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
         }
 
         .section-content {
@@ -346,7 +347,7 @@
             font-weight: 500;
         }
 
-        /* --- STYLING AUDIO PLAYER CUSTOM (MINIMALIS & NON-VIDEO) --- */
+        /* --- STYLING AUDIO PLAYER CUSTOM --- */
         .custom-audio-player {
             background: #f8fafc;
             border: 1px solid #e4e4e7;
@@ -466,12 +467,6 @@
             cursor: pointer;
         }
 
-        .speed-select:focus-visible {
-            outline: 2px solid #10b981;
-            outline-offset: 2px;
-        }
-
-        /* Menyembunyikan iframe YouTube agar pemutar tidak terlihat sama sekali namun tetap aktif */
         .hidden-yt-container {
             position: fixed;
             top: -100px;
@@ -516,13 +511,106 @@
             background: #16a34a;
         }
 
-        @media (max-width: 480px) {
-            .audio-card { padding: 14px; gap: 11px; border-radius: 14px; }
-            .date-info { position: static; align-self: flex-start; margin-bottom: -2px; }
-            .card-top { padding-right: 0; }
+        /* --- STYLING WIDGET KALENDER DI BAWAH --- */
+        .calendar-wrapper {
+            width: 100%;
+            max-width: 680px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
         }
 
-        /* --- DESAIN ANIMASI & TEKS LOADING RAPI --- */
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cal-header h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-title);
+        }
+
+        .cal-nav-btn {
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-body);
+            transition: background 0.2s;
+        }
+
+        .cal-nav-btn:hover {
+            background: var(--border-color);
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .cal-day-name {
+            font-size: 0.725rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 6px;
+        }
+
+        .cal-date-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            background: #fafafa;
+            color: var(--text-body);
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .cal-date-cell.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .cal-date-cell.has-event {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cal-date-cell.has-event:hover {
+            background: #d1fae5;
+        }
+
+        .cal-event-dot {
+            width: 4px;
+            height: 4px;
+            background-color: #059669;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        /* --- DESAIN LOADING & LAINNYA --- */
         .loading-box {
             display: flex;
             flex-direction: column;
@@ -555,122 +643,46 @@
         .loader-wave div:nth-child(3) { animation-delay: 0s; }
 
         @keyframes wavePulse {
-            0%, 80%, 100% {
-                transform: scale(0.4);
-                opacity: 0.25;
-            }
-            40% {
-                transform: scale(1.1);
-                opacity: 1;
-            }
+            0%, 80%, 100% { transform: scale(0.4); opacity: 0.25; }
+            40% { transform: scale(1.1); opacity: 1; }
         }
 
         .loading-title {
             color: var(--text-title);
             font-size: 0.9rem;
             font-weight: 600;
-            letter-spacing: -0.01em;
         }
 
         .loading-subtext {
             color: var(--text-muted);
             font-size: 0.775rem;
-            font-weight: 400;
-            line-height: 1.4;
         }
 
-        .docs-wrapper {
-            padding: 4px;
-        }
+        .docs-wrapper { padding: 4px; }
+        .docs-wrapper h3.section-title { font-size: 1.05rem; color: var(--text-title); margin-bottom: 16px; font-weight: 700; text-align: center; }
+        .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+        .doc-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; text-decoration: none; display: flex; flex-direction: column; }
+        .doc-card img { width: 100%; height: 140px; object-fit: cover; display: block; }
+        .doc-card-info { padding: 12px; text-align: center; }
+        .doc-card-info h4 { font-size: 0.85rem; color: var(--text-title); font-weight: 600; margin-bottom: 3px; }
+        .doc-card-info span { font-size: 0.775rem; color: var(--text-muted); }
 
-        .docs-wrapper h3.section-title {
-            font-size: 1.05rem;
-            color: var(--text-title);
-            margin-bottom: 16px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .docs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 14px;
-        }
-
-        .doc-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            overflow: hidden;
-            text-decoration: none;
-            transition: border-color 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .doc-card:hover {
-            border-color: var(--border-hover);
-        }
-
-        .doc-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .doc-card-info {
-            padding: 12px;
-            text-align: center;
-        }
-
-        .doc-card-info h4 {
-            font-size: 0.85rem;
-            color: var(--text-title);
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-
-        .doc-card-info span {
-            font-size: 0.775rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .about-wrapper {
-            padding: 10px 4px;
-            text-align: center;
-            color: var(--text-body);
-            line-height: 1.55;
-            max-width: 520px;
-            margin: 0 auto;
-        }
-
-        .about-wrapper h3 {
-            font-size: 1.05rem;
-            color: var(--text-title);
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .about-wrapper p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .about-wrapper .closing {
-            font-weight: 600;
-            color: var(--text-title);
-            margin-top: 14px;
-        }
+        .about-wrapper { padding: 10px 4px; text-align: center; color: var(--text-body); line-height: 1.55; max-width: 520px; margin: 0 auto; }
+        .about-wrapper h3 { font-size: 1.05rem; color: var(--text-title); margin-bottom: 10px; font-weight: 700; }
+        .about-wrapper p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+        .about-wrapper .closing { font-weight: 600; color: var(--text-title); margin-top: 14px; }
 
         footer {
             font-size: 0.75rem;
             color: var(--text-muted);
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: center;
-            font-weight: 400;
+        }
+
+        @media (max-width: 480px) {
+            .audio-card { padding: 14px; gap: 11px; border-radius: 14px; }
+            .date-info { position: static; align-self: flex-start; margin-bottom: -2px; }
+            .card-top { padding-right: 0; }
         }
     </style>
 </head>
@@ -759,6 +771,25 @@
         </div>
     </div>
 
+    <!-- WIDGET KALENDER INTERAKTIF DI BAWAH -->
+    <div class="calendar-wrapper" id="calendarSection">
+        <div class="cal-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
+            <h4 id="calMonthTitle">Bulan Tahun</h4>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
+        </div>
+        <div class="cal-grid">
+            <div class="cal-day-name">Min</div>
+            <div class="cal-day-name">Sen</div>
+            <div class="cal-day-name">Sel</div>
+            <div class="cal-day-name">Rab</div>
+            <div class="cal-day-name">Kam</div>
+            <div class="cal-day-name">Jum</div>
+            <div class="cal-day-name">Sab</div>
+        </div>
+        <div class="cal-grid" id="calDaysGrid" style="margin-top: 4px;"></div>
+    </div>
+
     <footer>
         Sekip Barat &copy; 2026
     </footer>
@@ -769,6 +800,9 @@
     // ==========================================
 
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxR1yYh8Jvr2xmTpjo9hgXSgmqKtLms0cPHiH0ax3AyXwlh_QjR64bh3WFz7ZrGYkVCfQ/exec";
+
+    let globalPengajianRows = [];
+    let currentCalDate = new Date();
 
 
     // ==========================================
@@ -869,7 +903,6 @@
             if (idVideo) {
                 const playerId = `sdc-yt-${index}-${idVideo.replace(/[^a-zA-Z0-9_-]/g, "")}`;
                 player = `
-                    <!-- Container YouTube disembunyikan total di luar layar agar halaman bersih murni audio -->
                     <div class="hidden-yt-container">
                         <iframe
                             id="${playerId}"
@@ -883,7 +916,6 @@
                     <div class="custom-audio-player" id="player-box-${playerId}">
                         <div class="player-main-controls">
                             <button class="play-pause-btn" id="btn-play-${playerId}" onclick="toggleSDCPlay('${playerId}')" aria-label="Putar / Jeda">
-                                <!-- Ikon Play -->
                                 <svg id="icon-play-${playerId}" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                             </button>
                             <div class="progress-container">
@@ -923,8 +955,9 @@
                 `;
             }
 
+            // ID unik berdasarkan index untuk memudahkan navigasi klik tanggal kalender
             return `
-                <article class="audio-card">
+                <article class="audio-card" id="card-item-${index}">
                     <span class="date-info">${tanggal}</span>
                     <div class="card-top">
                         <div class="row-1">
@@ -939,6 +972,110 @@
         }).join("");
 
         initSDCYouTubePlayers();
+    }
+
+
+    // ==========================================
+    // LOGIKA KALENDER INTERAKTIF
+    // ==========================================
+
+    const monthsIndo = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    function changeMonth(direction) {
+        currentCalDate.setMonth(currentCalDate.getMonth() + direction);
+        renderCalendar();
+    }
+
+    function parseDateString(str) {
+        if (!str) return null;
+        // Mencari pola angka yang mirip tanggal di string hari_tanggal (contoh: "Senin, 12 Oktober 2026")
+        const lower = str.toLowerCase();
+        for (let m = 0; m < monthsIndo.length; m++) {
+            if (lower.includes(monthsIndo[m].toLowerCase())) {
+                const parts = str.replace(/[^0-9]/g, " ").trim().split(/\s+/);
+                if (parts.length > 0) {
+                    const dayNum = parseInt(parts[0], 10);
+                    // Cek tahun jika ada
+                    let yearNum = currentCalDate.getFullYear();
+                    for (let p of parts) {
+                        if (p.length === 4 && !isNaN(p)) yearNum = parseInt(p, 10);
+                    }
+                    if (!isNaN(dayNum)) {
+                        return new Date(yearNum, m, dayNum);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function renderCalendar() {
+        const titleElem = document.getElementById("calMonthTitle");
+        const daysGrid = document.getElementById("calDaysGrid");
+        if (!titleElem || !daysGrid) return;
+
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        titleElem.textContent = `${monthsIndo[month]} ${year}`;
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        // Petakan tanggal mana saja di bulan ini yang memiliki pengajian
+        const eventDatesMap = {};
+        globalPengajianRows.forEach((item, index) => {
+            const parsed = parseDateString(item.hari_tanggal);
+            if (parsed && parsed.getFullYear() === year && parsed.getMonth() === month) {
+                const dNum = parsed.getDate();
+                eventDatesMap[dNum] = index; // simpan index data asli
+            }
+        });
+
+        let html = "";
+        // Kotak kosong untuk hari sebelum tanggal 1
+        for (let i = 0; i < firstDayIndex; i++) {
+            html += `<div class="cal-date-cell empty"></div>`;
+        }
+
+        // Render tanggal dalam bulan
+        for (let d = 1; d <= totalDays; d++) {
+            const hasEvent = eventDatesMap.hasOwnProperty(d);
+            if (hasEvent) {
+                const origIndex = eventDatesMap[d];
+                html += `
+                    <div class="cal-date-cell has-event" onclick="jumpToAudio(${origIndex})" title="Ada pengajian, klik untuk putar">
+                        <span>${d}</span>
+                        <div class="cal-event-dot"></div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="cal-date-cell">
+                        <span>${d}</span>
+                    </div>
+                `;
+            }
+        }
+
+        daysGrid.innerHTML = html;
+    }
+
+    function jumpToAudio(origIndex) {
+        switchSection('sdc');
+        // Karena data di-reverse saat dirender, sesuaikan index target
+        const reversedIndex = globalPengajianRows.length - 1 - origIndex;
+        const cardElem = document.getElementById(`card-item-${reversedIndex}`);
+        if (cardElem) {
+            cardElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardElem.style.borderColor = '#059669';
+            setTimeout(() => {
+                cardElem.style.borderColor = '';
+            }, 2000);
+        }
     }
 
 
@@ -1022,7 +1159,6 @@
         const player = sdcYTPlayers[pId];
         if (!player || typeof player.getPlayerState !== "function") return;
 
-        // Jeda player lain supaya suara tidak bertabrakan
         Object.keys(sdcYTPlayers).forEach(otherId => {
             if (otherId !== pId) {
                 try {
@@ -1137,7 +1273,9 @@
             const fingerprint = JSON.stringify(rows);
             if (fingerprint !== lastSDCDataFingerprint) {
                 lastSDCDataFingerprint = fingerprint;
+                globalPengajianRows = rows;
                 renderPengajian(rows);
+                renderCalendar();
             }
 
         } catch (error) {
